@@ -7,13 +7,13 @@
  * @wordpress-plugin
  * Plugin Name:       WordPress Geo Plugin GPS addon
  * Plugin URI:        http://cfgeoplugin.com/
- * Description:       WordPress GPS module for the CF Geo Plugin.
+ * Description:       WordPress GPS module for the WordPress Geo Plugin.
  * Version:           1.0.0
- * Author:            Ivijan-Stefan Stipic
- * Author URI:        https://linkedin.com/in/ivijanstefanstipic
+ * Author:            INFINITUM FORM
+ * Author URI:        https://infinitumform.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       cf-geoplugin-gps
+ * Text Domain:       wordpress-geoplugin-gps
  * Domain Path:       /languages
  * Network:           true
  *
@@ -94,16 +94,32 @@ if ( ! defined( 'CFGP_PREFIX' ) )		define( 'CFGP_PREFIX', 'cf_geo_'.preg_replace
 if ( ! defined( 'CFGP_GPS_FILE' ) )		define( 'CFGP_GPS_FILE', __FILE__ );
 // Plugin root
 if ( ! defined( 'CFGP_GPS_ROOT' ) )		define( 'CFGP_GPS_ROOT', rtrim(plugin_dir_path(CFGP_GPS_FILE), '/') );
+// Plugin URL root
+if ( ! defined( 'CFGP_GPS_URL' ) )		define( 'CFGP_GPS_URL', rtrim(plugin_dir_url( CFGP_GPS_FILE ), '/') );
+// Plugin URL root
+if ( ! defined( 'CFGP_GPS_ASSETS' ) )	define( 'CFGP_GPS_ASSETS', CFGP_GPS_URL . '/assets' );
 // Timestamp
 if( ! defined( 'CFGP_GPS_TIME' ) )		define( 'CFGP_GPS_TIME', time() );
 // Plugin name
-if ( ! defined( 'CFGP_NAME' ) )			define( 'CFGP_GPS_NAME', 'cf-geoplugin-gps');
+if ( ! defined( 'CFGP_GPS_NAME' ) )		define( 'CFGP_GPS_NAME', 'wordpress-geoplugin-gps');
+$cfgp_gps_version = NULL;
+if(function_exists('get_file_data') && $plugin_data = get_file_data( CFGP_GPS_FILE, array('Version' => 'Version'), false ))
+	$cfgp_gps_version = $plugin_data['Version'];
+else if(preg_match('/\*[\s\t]+?version:[\s\t]+?([0-9.]+)/i',file_get_contents( CFGP_GPS_FILE ), $v))
+	$cfgp_gps_version = $v[1];
+if ( ! defined( 'CFGP_GPS_VERSION' ) )		define( 'CFGP_GPS_VERSION', $cfgp_gps_version);
 
 /* 
  * Construct functons and shortcodes for the displaying user informations
 */
-if( !class_exists('CF_Geoplugin_GPS') && file_exists(CFGP_INCLUDES . '/class-cf-geoplugin-global.php')) :
-require CFGP_INCLUDES . '/class-cf-geoplugin-global.php';
+if( !class_exists('CF_Geoplugin_GPS')) :
+
+// Require geoplugin global
+if(file_exists(CFGP_INCLUDES . '/class-cf-geoplugin-global.php')) {
+	require CFGP_INCLUDES . '/class-cf-geoplugin-global.php';
+} else {
+	class CF_Geoplugin_Global {}
+}
 
 class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 {
@@ -115,6 +131,10 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	private $option = array();
 	
 	function __construct(){
+
+		// Prevent errors and plugin load
+		if(!method_exists('CF_Geoplugin_Global', 'get_instance')) return;
+		
 		// Get session
 		$session = array();
 		if( isset($_SESSION[ CFGP_PREFIX . 'api_session' ]) ) $session = $_SESSION[ CFGP_PREFIX . 'api_session' ];
@@ -128,9 +148,11 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 		$this->add_action('plugins_loaded', 'load_textdomain');
 		
 		// Add script to footer
-		if(!isset($session['gps']) || (isset($session['gps']) && !$session['gps'])) $this->add_action('wp_footer', 'add_script');
+		if(!isset($session['gps']) || (isset($session['gps']) && !$session['gps'])){
+			$this->add_action( 'wp_enqueue_scripts', 'register_scripts' );
+		}
 		
-		// Add shortcodes to CF Geo Plugin table
+		// Add shortcodes to WordPress Geo Plugin table
 		$this->add_action('page-cf-geoplugin-shortcode-table-address', 'shortcode_table');
 		$this->add_action('page-cf-geoplugin-beta-shortcode-table-address', 'beta_shortcode_table');
 		
@@ -142,7 +164,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	}
 	
 	/**
-	 * Addnew fields to CF Geo Plugin shortcode
+	 * Add new fields to WordPress Geo Plugin shortcode
 	 */
 	function api_render_response($response){
 		if(!isset($_SESSION[ CFGP_PREFIX . 'api_session' ])) return $response;
@@ -168,7 +190,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	}
 	
 	/**
-	 * Add beta shortcodes to CF Geo Plugin table
+	 * Add beta shortcodes to WordPress Geo Plugin table
 	 */
 	function beta_shortcode_table( $str ){
 		if(!isset($_SESSION[ CFGP_PREFIX . 'api_session' ])) return;
@@ -190,7 +212,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	<?php }
 	
 	/**
-	 * Add shortcodes to CF Geo Plugin table
+	 * Add shortcodes to WordPress Geo Plugin table
 	 */
 	function shortcode_table( $str ){
 		if(!isset($_SESSION[ CFGP_PREFIX . 'api_session' ])) return;
@@ -246,167 +268,22 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	}
 	
 	/**
-	 * Add script to footer
+	 * Register scripts
 	 */
-	function add_script() { ?>
-<script type="text/javascript">
-/* <![CDATA[ */
-(function($){
-	var info = [],
-		redirect = function( url ){
-			var X = setTimeout(function(){
-				window.location.replace(url);
-				return true;
-			},300);
-
-			if( window.location = url ){
-				clearTimeout(X);
-				return true;
-			} else {
-				if( window.location.href = url ){
-					clearTimeout(X);
-					return true;
-				}else{
-					clearTimeout(X);
-					window.location.replace(url);
-					return true;
-				}
-			}
-			return false;
-		},
-		send_possition = function( position ){
-			var latitude = position.coords.latitude,
-				longitude = position.coords.longitude;
-				
-			$.get('https://maps.googleapis.com/maps/api/geocode/json',{
-				key : '<?php echo $this->option['map_api_key']; ?>',
-				language : '<?php echo get_bloginfo('language'); ?>',
-				sensor : 'true',
-				latlng : latitude + ',' + longitude
-			}).done(function(data){
-				if(data.status == 'OK')
-				{
-					var geo = {}, i, key;
-					for(var i in data.results[0].address_components)
-					{
-						key = data.results[0].address_components[i].types[0];
-						geo[key]={
-							long_name : data.results[0].address_components[i].long_name,
-							short_name : data.results[0].address_components[i].short_name
-						}
-					}
-					
-					if(geo.country){
-						geo.countryCode = geo.country.short_name;
-						geo.countryName = geo.country.long_name;
-					}
-					
-					if(geo.locality){
-						geo.cityName = geo.locality.long_name;
-						geo.cityCode = geo.locality.short_name;
-					}
-					
-					if(geo.political){
-						geo.region = geo.political.long_name;
-					}
-					
-					if(geo.route){
-						geo.street = geo.route.long_name;
-					}
-					
-					if(geo.street_number){
-						geo.street_number = geo.street_number.long_name;
-					}
-					
-					if(data.results[0].formatted_address) {
-						geo.address = data.results[0].formatted_address;
-					}
-					
-					if(data.results[0].geometry && data.results[0].geometry.location)
-					{
-						geo.latitude = data.results[0].geometry.location.lat;
-						geo.longitude = data.results[0].geometry.location.lng;
-						geo.place_id = data.results[0].geometry.place_id;
-					}
-					else
-					{
-						geo.latitude = latitude;
-						geo.longitude = longitude;
-					}
-
-					$.post('<?php echo admin_url('admin-ajax.php'); ?>',{
-						action : 'cf_geoplugin_gps_set',
-						data : geo,
-						_ajax_nonce : '<?php echo wp_create_nonce( "cf-geoplugin-gps-set" ); ?>'
-					}).done(function(returns){ console.log(returns);
-						if(returns == 1){
-							location.reload();
-						}
-					});
-				}
-				else
-				{
-					var returns = null;
-					switch(data.status)
-					{
-						case 'ZERO_RESULTS':
-							returns = 'There is no results for this search.';
-							break;
-						case 'OVER_DAILY_LIMIT':
-							returns = 'Your daily limit is reached. Check your billing settings';
-							break;
-						case 'OVER_QUERY_LIMIT':
-							returns = 'Your account quota is reached.';
-							break;
-						case 'REQUEST_DENIED':
-							returns = 'Your request is denied.';
-							break;
-						case 'INVALID_REQUEST':
-							returns = 'Your sand bad or broken request to you API call.';
-							break;
-						case 'UNKNOWN_ERROR':
-							returns = 'Request could not be processed due to a server error. The request may succeed if you try again.';
-							break;
-					}
-					if(returns) console.log('Google Geocode: ' + returns);
-				}
-			});
-		},
-		display_error = function( error ){
-			var returns = null;
-			switch(error.code)
-			{
-				case error.PERMISSION_DENIED:
-					returns = "User denied the request for Geolocation."
-					break;
-				case error.POSITION_UNAVAILABLE:
-					returns = "Location information is unavailable."
-					break;
-				case error.TIMEOUT:
-					returns = "The request to get user location timed out."
-					break;
-				case error.UNKNOWN_ERROR:
-					returns = "An unknown error occurred."
-					break;
-			}
-			
-			if(returns) console.log('Google Geocode: ' + returns);
-		},
-		get_location = function(){
-			if (navigator.geolocation)
-			{
-				navigator.geolocation.getCurrentPosition(send_possition, display_error);
-			}
-			else
-			{
-				console.log("Geolocation is not supported by this browser.");
-			}
-		}
-	get_location();
-}(jQuery || window.jQuery || Zepto || window.Zepto))
-/* ]]> */
-</script>
-	<?php }
+	function register_scripts() {
+		wp_register_script( CFGP_GPS_NAME . '-gps', CFGP_GPS_ASSETS . '/js/wordpress-geoplugin-gps.js', array( 'jquery', CFGP_NAME . '-js-public' ), CFGP_GPS_VERSION, true );
+		wp_localize_script(
+			CFGP_GPS_NAME . '-gps',
+			'CFGEO_GPS',
+			array(
+				'ajax_url'			=> self_admin_url( 'admin-ajax.php' ),
+				'key'			=> $this->option['map_api_key'],
+				'language'		=> get_bloginfo('language'),
+				'nonce'			=> wp_create_nonce( "cf-geoplugin-gps-set" )
+			)
+		);
+		wp_enqueue_script( CFGP_GPS_NAME . '-gps' );
+	}
 	
 	/* 
 	 * Get plugin version
@@ -525,10 +402,59 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	}
 	
 	/**
+	 * Init admin functions
+	 */
+	public static function admin_init (){
+		// Display error message on the activation fail
+		if(get_option('cf-geoplugin-gps-activation-message', false) !== false)
+		{
+			deactivate_plugins( plugin_basename( CFGP_GPS_FILE ) );
+			add_action( 'admin_notices', function(){
+				?>
+				<div class="notice notice-error is-dismissible">
+					<h2><?php _e('Activation Has Failed',CFGP_GPS_NAME); ?></h2>
+					<p><?php echo get_option('cf-geoplugin-gps-activation-message', ''); ?></p>
+				</div>
+				<?php
+				delete_option('cf-geoplugin-gps-activation-message');
+			} );
+			return;
+		}
+	}
+	
+	/**
 	 * Activation function
 	 */
 	public static function activation(){
+		if( !function_exists('get_plugin_data') ){
+			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		}
+		// dependent plugin
+		$parent_plugin = 'cf-geoplugin/cf-geoplugin.php';
+
+		// dependent plugin version
+		$version_to_check = '7.7.0'; 
+
+		$category_error = false;
+
+		if(file_exists(WP_PLUGIN_DIR.'/'.$parent_plugin)){
+			$parent_plugin_data = get_plugin_data( WP_PLUGIN_DIR.'/'.$parent_plugin);
+			$category_error = (!version_compare ( $parent_plugin_data['Version'], $version_to_check, '>=') ? true : false);
+		} else {
+			update_option('cf-geoplugin-gps-activation-message', sprintf(__('You need first to install %1$s in order to use this %2$s.', CFGP_GPS_NAME), '<a href="https://wordpress.org/plugins/cf-geoplugin/" target="_blank">WordPress Geo Plugin</a>', '<b>WordPress Geo Plugin GPS addon</b>'));
+			return;
+		}  
+
+		if ( $category_error ) {
+			update_option('cf-geoplugin-gps-activation-message', sprintf(__('You need first to upgrade your %1$s to version %2$s or above in order to use this %3$s.', CFGP_GPS_NAME), '<b>WordPress Geo Plugin</b>', "<b>{$version_to_check}</b>", '<b>WordPress Geo Plugin GPS addon</b>'));
+			return;
+		}
 		
+		if(!is_plugin_active($parent_plugin))
+		{
+			update_option('cf-geoplugin-gps-activation-message', sprintf(__('%1$s need to be activated in order to use this %2$s.', CFGP_GPS_NAME), '<b>WordPress Geo Plugin</b>', '<b>WordPress Geo Plugin GPS addon</b>'));
+			return;
+		}
 	}
 	
 	/**
@@ -580,4 +506,10 @@ register_activation_hook( CFGP_GPS_FILE, array('CF_Geoplugin_GPS', 'activation')
 add_action('init', function() {
 	new CF_Geoplugin_GPS();
 }, 2);
+/* 
+ * Initialize plugin in admin
+*/
+if(is_admin()){
+	add_action('admin_init', array('CF_Geoplugin_GPS', 'admin_init'));
+}
 endif;
