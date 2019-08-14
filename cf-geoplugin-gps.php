@@ -5,15 +5,15 @@
  * @package           CF_Geoplugin_GPS
  *
  * @wordpress-plugin
- * Plugin Name:       WordPress Geo Plugin GPS addon
+ * Plugin Name:       GPS for CF Geo Plugin
  * Plugin URI:        http://cfgeoplugin.com/
- * Description:       WordPress GPS module for the WordPress Geo Plugin.
+ * Description:       WordPress GPS module for the CF Geo Plugin.
  * Version:           1.0.0
  * Author:            INFINITUM FORM
  * Author URI:        https://infinitumform.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       wordpress-geoplugin-gps
+ * Text Domain:       cf-geoplugin-gps
  * Domain Path:       /languages
  * Network:           true
  *
@@ -101,7 +101,7 @@ if ( ! defined( 'CFGP_GPS_ASSETS' ) )	define( 'CFGP_GPS_ASSETS', CFGP_GPS_URL . 
 // Timestamp
 if( ! defined( 'CFGP_GPS_TIME' ) )		define( 'CFGP_GPS_TIME', time() );
 // Plugin name
-if ( ! defined( 'CFGP_GPS_NAME' ) )		define( 'CFGP_GPS_NAME', 'wordpress-geoplugin-gps');
+if ( ! defined( 'CFGP_GPS_NAME' ) )		define( 'CFGP_GPS_NAME', 'cf-geoplugin-gps');
 $cfgp_gps_version = NULL;
 if(function_exists('get_file_data') && $plugin_data = get_file_data( CFGP_GPS_FILE, array('Version' => 'Version'), false ))
 	$cfgp_gps_version = $plugin_data['Version'];
@@ -152,7 +152,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 			$this->add_action( 'wp_enqueue_scripts', 'register_scripts' );
 		}
 		
-		// Add shortcodes to WordPress Geo Plugin table
+		// Add shortcodes to CF Geo Plugin table
 		$this->add_action('page-cf-geoplugin-shortcode-table-address', 'shortcode_table');
 		$this->add_action('page-cf-geoplugin-beta-shortcode-table-address', 'beta_shortcode_table');
 		
@@ -164,7 +164,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	}
 	
 	/**
-	 * Add new fields to WordPress Geo Plugin shortcode
+	 * Add new fields to CF Geo Plugin shortcode
 	 */
 	function api_render_response($response){
 		if(!isset($_SESSION[ CFGP_PREFIX . 'api_session' ])) return $response;
@@ -190,7 +190,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	}
 	
 	/**
-	 * Add beta shortcodes to WordPress Geo Plugin table
+	 * Add beta shortcodes to CF Geo Plugin table
 	 */
 	function beta_shortcode_table( $str ){
 		if(!isset($_SESSION[ CFGP_PREFIX . 'api_session' ])) return;
@@ -212,7 +212,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	<?php }
 	
 	/**
-	 * Add shortcodes to WordPress Geo Plugin table
+	 * Add shortcodes to CF Geo Plugin table
 	 */
 	function shortcode_table( $str ){
 		if(!isset($_SESSION[ CFGP_PREFIX . 'api_session' ])) return;
@@ -441,18 +441,18 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 			$parent_plugin_data = get_plugin_data( WP_PLUGIN_DIR.'/'.$parent_plugin);
 			$category_error = (!version_compare ( $parent_plugin_data['Version'], $version_to_check, '>=') ? true : false);
 		} else {
-			update_option('cf-geoplugin-gps-activation-message', sprintf(__('You need first to install %1$s in order to use this %2$s.', CFGP_GPS_NAME), '<a href="https://wordpress.org/plugins/cf-geoplugin/" target="_blank">WordPress Geo Plugin</a>', '<b>WordPress Geo Plugin GPS addon</b>'));
+			update_option('cf-geoplugin-gps-activation-message', sprintf(__('You need first to install %1$s in order to use this %2$s.', CFGP_GPS_NAME), '<a href="https://wordpress.org/plugins/cf-geoplugin/" target="_blank">CF Geo Plugin</a>', '<b>CF Geo Plugin GPS addon</b>'));
 			return;
 		}  
 
 		if ( $category_error ) {
-			update_option('cf-geoplugin-gps-activation-message', sprintf(__('You need first to upgrade your %1$s to version %2$s or above in order to use this %3$s.', CFGP_GPS_NAME), '<b>WordPress Geo Plugin</b>', "<b>{$version_to_check}</b>", '<b>WordPress Geo Plugin GPS addon</b>'));
+			update_option('cf-geoplugin-gps-activation-message', sprintf(__('You need first to upgrade your %1$s to version %2$s or above in order to use this %3$s.', CFGP_GPS_NAME), '<b>CF Geo Plugin</b>', "<b>{$version_to_check}</b>", '<b>CF Geo Plugin GPS addon</b>'));
 			return;
 		}
 		
 		if(!is_plugin_active($parent_plugin))
 		{
-			update_option('cf-geoplugin-gps-activation-message', sprintf(__('%1$s need to be activated in order to use this %2$s.', CFGP_GPS_NAME), '<b>WordPress Geo Plugin</b>', '<b>WordPress Geo Plugin GPS addon</b>'));
+			update_option('cf-geoplugin-gps-activation-message', sprintf(__('%1$s need to be activated in order to use this %2$s.', CFGP_GPS_NAME), '<b>CF Geo Plugin</b>', '<b>CF Geo Plugin GPS addon</b>'));
 			return;
 		}
 	}
