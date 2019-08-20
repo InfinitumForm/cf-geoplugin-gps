@@ -8,7 +8,7 @@
  * Plugin Name:       GPS for CF Geo Plugin
  * Plugin URI:        http://cfgeoplugin.com/
  * Description:       WordPress GPS module for the CF Geo Plugin.
- * Version:           1.0.0
+ * Version:           1.0.2
  * Author:            INFINITUM FORM
  * Author URI:        https://infinitumform.com/
  * License:           GPL-2.0+
@@ -70,19 +70,28 @@ if ( defined( 'WP_CF_GEO_DEBUG' ) ){
 	}
 }
 
-// Main plugin file
-if ( ! defined( 'CFGP_FILE' ) )			define( 'CFGP_FILE', dirname(__DIR__) . '/cf-geoplugin/cf-geoplugin.php' );
-// Current plugin version ( if change, clear also session cache )
 $cfgp_version = NULL;
-if(function_exists('get_file_data') && $plugin_data = get_file_data( CFGP_FILE, array('Version' => 'Version'), false ))
-	$cfgp_version = $plugin_data['Version'];
-else if(preg_match('/\*[\s\t]+?version:[\s\t]+?([0-9.]+)/i',file_get_contents( CFGP_FILE ), $v))
-	$cfgp_version = $v[1];
+if(file_exists(dirname(__DIR__) . '/cf-geoplugin/cf-geoplugin.php'))
+{
+	// Main plugin file
+	if ( ! defined( 'CFGP_FILE' ) )			define( 'CFGP_FILE', dirname(__DIR__) . '/cf-geoplugin/cf-geoplugin.php' );
+	// Main Plugin root
+	if ( ! defined( 'CFGP_ROOT' ) )			define( 'CFGP_ROOT', rtrim(plugin_dir_path(CFGP_FILE), '/') );
+	// Current plugin version ( if change, clear also session cache )
+	if(function_exists('get_file_data') && $plugin_data = get_file_data( CFGP_FILE, array('Version' => 'Version'), false ))
+		$cfgp_version = $plugin_data['Version'];
+	else if(preg_match('/\*[\s\t]+?version:[\s\t]+?([0-9.]+)/i',file_get_contents( CFGP_FILE ), $v))
+		$cfgp_version = $v[1];
+} else {
+	// Main plugin file
+	if ( ! defined( 'CFGP_FILE' ) )		define( 'CFGP_FILE', ABSPATH . '/wp-content/plugins/cf-geoplugin/cf-geoplugin.php' );
+	// Main Plugin root
+	if ( ! defined( 'CFGP_ROOT' ) )		define( 'CFGP_ROOT', ABSPATH . '/wp-content/plugins/cf-geoplugin' );
+}
 if ( ! defined( 'CFGP_VERSION' ) )		define( 'CFGP_VERSION', $cfgp_version);
 // Main website
 if ( ! defined( 'CFGP_STORE' ) )		define( 'CFGP_STORE', 'https://cfgeoplugin.com');
-// Main Plugin root
-if ( ! defined( 'CFGP_ROOT' ) )			define( 'CFGP_ROOT', rtrim(plugin_dir_path(CFGP_FILE), '/') );
+
 // Includes directory
 if ( ! defined( 'CFGP_INCLUDES' ) )		define( 'CFGP_INCLUDES', CFGP_ROOT . '/includes' );
 // Main plugin name
@@ -100,6 +109,8 @@ if ( ! defined( 'CFGP_GPS_URL' ) )		define( 'CFGP_GPS_URL', rtrim(plugin_dir_url
 if ( ! defined( 'CFGP_GPS_ASSETS' ) )	define( 'CFGP_GPS_ASSETS', CFGP_GPS_URL . '/assets' );
 // Timestamp
 if( ! defined( 'CFGP_GPS_TIME' ) )		define( 'CFGP_GPS_TIME', time() );
+// Session
+if( ! defined( 'CFGP_GPS_SESSION' ) )	define( 'CFGP_GPS_SESSION', 5 );
 // Plugin name
 if ( ! defined( 'CFGP_GPS_NAME' ) )		define( 'CFGP_GPS_NAME', 'cf-geoplugin-gps');
 $cfgp_gps_version = NULL;
@@ -107,7 +118,7 @@ if(function_exists('get_file_data') && $plugin_data = get_file_data( CFGP_GPS_FI
 	$cfgp_gps_version = $plugin_data['Version'];
 else if(preg_match('/\*[\s\t]+?version:[\s\t]+?([0-9.]+)/i',file_get_contents( CFGP_GPS_FILE ), $v))
 	$cfgp_gps_version = $v[1];
-if ( ! defined( 'CFGP_GPS_VERSION' ) )		define( 'CFGP_GPS_VERSION', $cfgp_gps_version);
+if ( ! defined( 'CFGP_GPS_VERSION' ) )	define( 'CFGP_GPS_VERSION', $cfgp_gps_version);
 
 /* 
  * Construct functons and shortcodes for the displaying user informations
@@ -134,6 +145,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 
 		// Prevent errors and plugin load
 		if(!method_exists('CF_Geoplugin_Global', 'get_instance')) return;
+		if(!$this->check_activation()) return;
 		
 		// Get session
 		$session = array();
@@ -394,7 +406,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	{
 		$key_pos = array_search($key, array_keys($array));
 		if($key_pos !== false){
-			$key_pos++;
+			++$key_pos;
 			$second_array = array_splice($array, $key_pos);
 			$array = array_merge($array, $array_to_insert, $second_array);
 		}
@@ -488,7 +500,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 					unset($_SESSION[ $key ]);
 				}
 			}
-			$_SESSION[CFGP_PREFIX . 'session_expire'] = (time() + (60 * 5));
+			$_SESSION[CFGP_PREFIX . 'session_expire'] = (time() + (60 * CFGP_GPS_SESSION));
 		}
 	}
 }
