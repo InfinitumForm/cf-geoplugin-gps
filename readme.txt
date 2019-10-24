@@ -5,7 +5,7 @@ Tags: gps, geolocation, cf-geoplugin, woocommerce, store-locator, seo, google-ma
 Requires at least: 3.0
 Tested up to: 5.3
 Requires PHP: 5.6.0
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,16 +71,19 @@ No! This plugin cannot be used to track visitors. Plugin only return some basic 
 
 == Changelog ==
 
-= 1.0.3 =
+= 1.0.4 =
 * Added WordPress 5.3 support
 
-= 1.0.2 =
-* Fixed session problem
+= 1.0.3 =
+* Improved sanitization
 
 == Upgrade Notice ==
 
-= 1.0.3 =
+= 1.0.4 =
 * Added WordPress 5.3 support
+
+= 1.0.3 =
+* Improved sanitization
 
 = 1.0.2 =
 * Fixed session problem

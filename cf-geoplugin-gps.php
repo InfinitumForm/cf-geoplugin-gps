@@ -8,7 +8,7 @@
  * Plugin Name:       GPS for CF Geo Plugin
  * Plugin URI:        http://cfgeoplugin.com/
  * Description:       WordPress GPS module for the CF Geo Plugin.
- * Version:           1.0.3
+ * Version:           1.0.4
  * Author:            INFINITUM FORM
  * Author URI:        https://infinitumform.com/
  * License:           GPL-2.0+
@@ -252,7 +252,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 		check_ajax_referer( 'cf-geoplugin-gps-set', '_ajax_nonce' );
 		if(!isset($_REQUEST['data'])) wp_die(-1);
 		
-		$data = $this->sanitize( $_REQUEST['data'] );
+		$data = method_exists('CF_Geoplugin_Global', 'sanitize') ? parent::sanitize( $_REQUEST['data'] ) : self::____sanitize( $_REQUEST['data'] );
 		
 		$session_api = CFGP_PREFIX . 'api_session';
 		$session = array();
@@ -277,6 +277,49 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 			$_SESSION[ $session_expire ] = (time() + (60 * 60 * 24));
 		}
 		wp_die(1);
+	}
+	
+	/**
+	 * Sanitize string or array (FUTURE REMOVED)
+	 *
+	 * This functionality do automatization for the certain type of data expected in this plugin
+	 */
+	private static function ____sanitize( $str ){
+		if( is_array($str) )
+		{
+			$data = array();
+			foreach($str as $key => $obj)
+			{
+				$data[$key]=self::sanitize( $obj ); 
+			}
+			return $data;
+		}
+		else
+		{
+			$str = trim( $str );
+			
+			if(empty($str) && $str != 0)
+				return NULL;
+			else if(is_numeric($str))
+			{
+				if(intval( $str ) == $str)
+					$str = intval( $str );
+				else if(floatval($str) == $str)
+					$str = floatval( $str );
+				else
+					$str = sanitize_text_field( $str );
+			}
+			else if(!is_bool($str) && in_array(strtolower($str), array('true','false'), true))
+			{
+				$str = ( strtolower($str) == 'true' );
+			}
+			else
+			{
+				$str = sanitize_text_field( $str );
+			}
+			
+			return $str;
+		}
 	}
 	
 	/**
@@ -354,49 +397,6 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
         } else {
             load_plugin_textdomain( 'cf-geoplugin-gps', false, $path . '/languages' );
         }
-	}
-	
-	/**
-	 * Sanitize string or array
-	 *
-	 * This functionality do automatization for the certain type of data expected in this plugin
-	 */
-	private function sanitize( $str ){
-		if( is_array($str) )
-		{
-			$data = array();
-			foreach($str as $key => $obj)
-			{
-				$data[$key]=$this->sanitize( $obj ); 
-			}
-			return $data;
-		}
-		else
-		{
-			$str = trim( $str );
-			
-			if(empty($str))
-				return NULL;
-			else if(is_numeric($str))
-			{
-				if(intval( $str ) == $str)
-					$str = intval( $str );
-				else if(floatval($str) == $str)
-					$str = floatval( $str );
-				else
-					$str = sanitize_text_field( $str );
-			}
-			else if(!is_bool($str) && in_array(strtolower($str), array('true','false'), true))
-			{
-				$str = ( strtolower($str) == 'true' );
-			}
-			else
-			{
-				$str = sanitize_text_field( $str );
-			}
-			
-			return $str;
-		}
 	}
 
 	/**
