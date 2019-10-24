@@ -8,7 +8,7 @@
  * Plugin Name:       GPS for CF Geo Plugin
  * Plugin URI:        http://cfgeoplugin.com/
  * Description:       WordPress GPS module for the CF Geo Plugin.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Author:            INFINITUM FORM
  * Author URI:        https://infinitumform.com/
  * License:           GPL-2.0+

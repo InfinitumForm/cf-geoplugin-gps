@@ -3,9 +3,9 @@ Contributors: ivijanstefan, creativform
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=creativform@gmail.com
 Tags: gps, geolocation, cf-geoplugin, woocommerce, store-locator, seo, google-maps, geomarketing, content include, content exclude, geo plugin, geo target, geo, geotargeting, geofencing, geotag, cache, rocket
 Requires at least: 3.0
-Tested up to: 5.2
+Tested up to: 5.3
 Requires PHP: 5.6.0
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,10 +71,16 @@ No! This plugin cannot be used to track visitors. Plugin only return some basic 
 
 == Changelog ==
 
+= 1.0.3 =
+* Added WordPress 5.3 support
+
 = 1.0.2 =
 * Fixed session problem
 
 == Upgrade Notice ==
+
+= 1.0.3 =
+* Added WordPress 5.3 support
 
 = 1.0.2 =
 * Fixed session problem
