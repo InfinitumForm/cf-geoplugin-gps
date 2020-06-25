@@ -3,7 +3,7 @@
  *
  * @link              http://cfgeoplugin.com/
  * @since             1.0.0
- * @version           1.0.0
+ * @version           1.0.1
  * @package           CF_Geoplugin_GPS
  * @author            INFINITUM FORM
  * @license           GPL-2.0+
@@ -22,9 +22,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
- 
+
 ;(function($){
 	var info = [],
+		// Safe redirection
 		redirect = function( url ){
 			var X = setTimeout(function(){
 				window.location.replace(url);
@@ -46,20 +47,20 @@
 			}
 			return false;
 		},
-		send_possition = function( position ){
+		// Send GPS position
+		send_position = function( position ){
 			var latitude = position.coords.latitude,
 				longitude = position.coords.longitude;
 
 			$.get('https://maps.googleapis.com/maps/api/geocode/json',{
 				key : CFGEO_GPS.key,
 				language : CFGEO_GPS.language,
-				sensor : 'true',
 				latlng : latitude + ',' + longitude
 			}).done(function(data){
 				if(data.status == 'OK')
 				{
 					var geo = {}, i, key;
-					for(var i in data.results[0].address_components)
+					for(i in data.results[0].address_components)
 					{
 						key = data.results[0].address_components[i].types[0];
 						geo[key]={
@@ -122,25 +123,31 @@
 					switch(data.status)
 					{
 						case 'ZERO_RESULTS':
-							returns = 'There is no results for this search.';
+							returns = CFGEO_GPS.label.ZERO_RESULTS;
 							break;
 						case 'OVER_DAILY_LIMIT':
-							returns = 'Your daily limit is reached. Check your billing settings';
+							returns = CFGEO_GPS.label.OVER_DAILY_LIMIT;
 							break;
 						case 'OVER_QUERY_LIMIT':
-							returns = 'Your account quota is reached.';
+							returns = CFGEO_GPS.label.OVER_QUERY_LIMIT;
 							break;
 						case 'REQUEST_DENIED':
-							returns = 'Your request is denied.';
+							returns = CFGEO_GPS.label.REQUEST_DENIED;
 							break;
 						case 'INVALID_REQUEST':
-							returns = 'Your send bad or broken request to you API call.';
+							returns = CFGEO_GPS.label.INVALID_REQUEST;
 							break;
 						case 'UNKNOWN_ERROR':
-							returns = 'Request could not be processed due to a server error. The request may succeed if you try again.';
+							returns = CFGEO_GPS.label.DATA_UNKNOWN_ERROR;
 							break;
 					}
-					if(returns) console.log('Google Geocode: ' + returns);
+					if(returns)
+					{
+						if(typeof data.error_message != 'undefined')
+							console.error(CFGEO_GPS.label.google_geocode.replace(/%s/g, data.error_message));
+						else
+							console.info(CFGEO_GPS.label.google_geocode.replace(/%s/g, returns));
+					}
 				}
 			});
 		},
@@ -149,29 +156,31 @@
 			switch(error.code)
 			{
 				case error.PERMISSION_DENIED:
-					returns = "User denied the request for Geolocation."
+					returns = CFGEO_GPS.label.PERMISSION_DENIED
 					break;
 				case error.POSITION_UNAVAILABLE:
-					returns = "Location information is unavailable."
+					returns = CFGEO_GPS.label.POSITION_UNAVAILABLE
 					break;
 				case error.TIMEOUT:
-					returns = "The request to get user location timed out."
+					returns = CFGEO_GPS.label.TIMEOUT
 					break;
 				case error.UNKNOWN_ERROR:
-					returns = "An unknown error occurred."
+					returns = CFGEO_GPS.label.UNKNOWN_ERROR
 					break;
 			}
 			
-			if(returns) console.log('Google Geocode: ' + returns);
+			if(returns) {
+				console.error(CFGEO_GPS.label.google_geocode.replace(/%s/g, returns));
+			}
 		},
 		get_location = function(){
 			if (navigator.geolocation)
 			{
-				navigator.geolocation.getCurrentPosition(send_possition, display_error);
+				navigator.geolocation.getCurrentPosition(send_position, display_error);
 			}
 			else
 			{
-				console.log("Geolocation is not supported by this browser.");
+				console.log(CFGEO_GPS.label.google_geocode);
 			}
 		}
 	get_location();

@@ -5,10 +5,10 @@
  * @package           CF_Geoplugin_GPS
  *
  * @wordpress-plugin
- * Plugin Name:       GPS for CF Geo Plugin
+ * Plugin Name:       WordPress Geo Plugin GPS extension
  * Plugin URI:        http://cfgeoplugin.com/
  * Description:       WordPress GPS module for the CF Geo Plugin.
- * Version:           1.0.4
+ * Version:           1.0.6
  * Author:            INFINITUM FORM
  * Author URI:        https://infinitumform.com/
  * License:           GPL-2.0+
@@ -70,23 +70,34 @@ if ( defined( 'WP_CF_GEO_DEBUG' ) ){
 	}
 }
 
-$cfgp_version = NULL;
-if(file_exists(dirname(__DIR__) . '/cf-geoplugin/cf-geoplugin.php'))
+// Find wp-admin file path
+if ( strrpos(WP_CONTENT_DIR, '/wp-content/', 1) !== false) {
+    $WP_ADMIN_DIR = substr(WP_CONTENT_DIR, 0, -10) . 'wp-admin';
+} else {
+    $WP_ADMIN_DIR = substr(WP_CONTENT_DIR, 0, -11) . '/wp-admin';
+}
+if (!defined('WP_ADMIN_DIR')) define('WP_ADMIN_DIR', $WP_ADMIN_DIR);
+
+if(file_exists(WP_PLUGIN_DIR . '/cf-geoplugin'))
 {
-	// Main plugin file
-	if ( ! defined( 'CFGP_FILE' ) )			define( 'CFGP_FILE', dirname(__DIR__) . '/cf-geoplugin/cf-geoplugin.php' );
 	// Main Plugin root
-	if ( ! defined( 'CFGP_ROOT' ) )			define( 'CFGP_ROOT', rtrim(plugin_dir_path(CFGP_FILE), '/') );
-	// Current plugin version ( if change, clear also session cache )
+	if ( ! defined( 'CFGP_ROOT' ) )			define( 'CFGP_ROOT', WP_PLUGIN_DIR . '/cf-geoplugin' );
+	// Main plugin file
+	if ( ! defined( 'CFGP_FILE' ) )			define( 'CFGP_FILE', CFGP_ROOT . '/cf-geoplugin.php' );
+} else {
+	// Main Plugin root
+	if ( ! defined( 'CFGP_ROOT' ) )		define( 'CFGP_ROOT', WP_CONTENT_DIR . '/plugins/cf-geoplugin' );
+	// Main plugin file
+	if ( ! defined( 'CFGP_FILE' ) )		define( 'CFGP_FILE', CFGP_ROOT . '/cf-geoplugin.php' );
+}
+// Current plugin version ( if change, clear also session cache )
+$cfgp_version = NULL;
+if(file_exists(CFGP_FILE))
+{
 	if(function_exists('get_file_data') && $plugin_data = get_file_data( CFGP_FILE, array('Version' => 'Version'), false ))
 		$cfgp_version = $plugin_data['Version'];
-	else if(preg_match('/\*[\s\t]+?version:[\s\t]+?([0-9.]+)/i',file_get_contents( CFGP_FILE ), $v))
+	if(!$cfgp_version && preg_match('/\*[\s\t]+?version:[\s\t]+?([0-9.]+)/i',file_get_contents( CFGP_FILE ), $v))
 		$cfgp_version = $v[1];
-} else {
-	// Main plugin file
-	if ( ! defined( 'CFGP_FILE' ) )		define( 'CFGP_FILE', ABSPATH . '/wp-content/plugins/cf-geoplugin/cf-geoplugin.php' );
-	// Main Plugin root
-	if ( ! defined( 'CFGP_ROOT' ) )		define( 'CFGP_ROOT', ABSPATH . '/wp-content/plugins/cf-geoplugin' );
 }
 if ( ! defined( 'CFGP_VERSION' ) )		define( 'CFGP_VERSION', $cfgp_version);
 // Main website
@@ -116,9 +127,27 @@ if ( ! defined( 'CFGP_GPS_NAME' ) )		define( 'CFGP_GPS_NAME', 'cf-geoplugin-gps'
 $cfgp_gps_version = NULL;
 if(function_exists('get_file_data') && $plugin_data = get_file_data( CFGP_GPS_FILE, array('Version' => 'Version'), false ))
 	$cfgp_gps_version = $plugin_data['Version'];
-else if(preg_match('/\*[\s\t]+?version:[\s\t]+?([0-9.]+)/i',file_get_contents( CFGP_GPS_FILE ), $v))
+if(!$cfgp_gps_version && preg_match('/\*[\s\t]+?version:[\s\t]+?([0-9.]+)/i',file_get_contents( CFGP_GPS_FILE ), $v))
 	$cfgp_gps_version = $v[1];
 if ( ! defined( 'CFGP_GPS_VERSION' ) )	define( 'CFGP_GPS_VERSION', $cfgp_gps_version);
+
+// Check if is multisite installation
+if( ! defined( 'CFGP_MULTISITE' ) && defined( 'WP_ALLOW_MULTISITE' ) && WP_ALLOW_MULTISITE && defined( 'MULTISITE' ) && MULTISITE )			
+{
+	define( 'CFGP_MULTISITE', WP_ALLOW_MULTISITE );
+}
+
+if( ! defined( 'CFGP_MULTISITE' ) )			
+{
+    // New safer approach
+    if( !function_exists( 'is_plugin_active_for_network' ) )
+		include WP_ADMIN_DIR . '/includes/plugin.php';
+
+	if(file_exists(WP_ADMIN_DIR . '/includes/plugin.php'))
+		define( 'CFGP_MULTISITE', is_plugin_active_for_network( CFGP_ROOT . '/cf-geoplugin-gps.php' ) );
+}
+
+if( ! defined( 'CFGP_MULTISITE' ) ) define( 'CFGP_MULTISITE', false );
 
 /* 
  * Construct functons and shortcodes for the displaying user informations
@@ -167,13 +196,65 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 		// Add shortcodes to CF Geo Plugin table
 		$this->add_action('page-cf-geoplugin-shortcode-table-address', 'shortcode_table');
 		$this->add_action('page-cf-geoplugin-beta-shortcode-table-address', 'beta_shortcode_table');
+		$this->add_action('page-cf-geoplugin-tag-table-address', 'tags_table');
 		
 		// Load ajax for GPS data setup
 		$this->add_action('wp_ajax_cf_geoplugin_gps_set', 'ajax_set');
 		$this->add_action('wp_ajax_nopriv_cf_geoplugin_gps_set', 'ajax_set');
 		$this->add_filter('cf_geeoplugin_api_get_geodata', 'api_get_geodata', 1, 1);
 		$this->add_filter('cf_geeoplugin_api_render_response', 'api_render_response', 1, 1);
+		
+		// Plugin update message
+		$this->add_action( 'in_plugin_update_message-cf-geoplugin-gps/cf-geoplugin-gps.php', 'in_plugin_update_message', 10, 2 );
 	}
+	
+	/**
+	 * Plugin update message
+	 */
+	public function in_plugin_update_message($args, $response) {
+			
+		//	echo '<pre>', var_dump($response), '</pre>';
+			
+		   if (isset($response->upgrade_notice) && strlen(trim($response->upgrade_notice)) > 0) : ?>
+<style>
+.cf-geoplugin-upgrade-notice{
+	padding: 10px;
+	color: #000;
+	margin-top: 10px
+}
+.cf-geoplugin-upgrade-notice-list ol{
+	list-style-type: decimal;
+	padding-left:0;
+	margin-left: 15px;
+}
+.cf-geoplugin-upgrade-notice + p{
+	display:none;
+}
+.cf-geoplugin-upgrade-notice-info{
+	margin-top:32px;
+	font-weight:600;
+}
+</style>
+<div class="cf-geoplugin-upgrade-notice">
+	<h3><?php printf(__('Important upgrade notice for the version %s:', CFGP_GPS_NAME), $response->new_version); ?></h3>
+	<div class="cf-geoplugin-upgrade-notice-list">
+		<?php echo str_replace(
+			array(
+				'<ul>',
+				'</ul>'
+			),array(
+				'<ol>',
+				'</ol>'
+			),
+			$response->upgrade_notice
+		); ?>
+	</div>
+	<div class="cf-geoplugin-upgrade-notice-info">
+		<?php _e('NOTE: Before doing the update, it would be a good idea to backup your WordPress installations and settings.', CFGP_GPS_NAME); ?>
+	</div>
+</div> 
+		    <?php endif;
+		}
 	
 	/**
 	 * Add new fields to CF Geo Plugin shortcode
@@ -200,50 +281,6 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 		}
 		return $response;
 	}
-	
-	/**
-	 * Add beta shortcodes to CF Geo Plugin table
-	 */
-	function beta_shortcode_table( $str ){
-		if(!isset($_SESSION[ CFGP_PREFIX . 'api_session' ])) return;
-		
-		$session = $_SESSION[ CFGP_PREFIX . 'api_session' ];
-	?>
-	<?php if(isset($session['street'])) : ?>
-		<tr>
-			<td><kbd>[cfgeo_street]</kbd> <i class="badge">(GPS)</i></td>
-			<td><?php echo $session['street']; ?></td>
-		</tr>
-	<?php endif; ?>
-	<?php if(isset($session['street_number'])) : ?>
-		<tr>
-			<td><kbd>[cfgeo_street_number]</kbd> <i class="badge">(GPS)</i></td>
-			<td><?php echo $session['street_number']; ?></td>
-		</tr>
-	<?php endif; ?>
-	<?php }
-	
-	/**
-	 * Add shortcodes to CF Geo Plugin table
-	 */
-	function shortcode_table( $str ){
-		if(!isset($_SESSION[ CFGP_PREFIX . 'api_session' ])) return;
-		
-		$session = $_SESSION[ CFGP_PREFIX . 'api_session' ];
-	?>
-	<?php if(isset($session['street'])) : ?>
-		<tr>
-			<td><kbd>[cfgeo return="street"]</kbd> <i class="badge">(GPS)</i></td>
-			<td><?php echo $session['street']; ?></td>
-		</tr>
-	<?php endif; ?>
-	<?php if(isset($session['street_number'])) : ?>
-		<tr>
-			<td><kbd>[cfgeo return="street_number"]</kbd> <i class="badge">(GPS)</i></td>
-			<td><?php echo $session['street_number']; ?></td>
-		</tr>
-	<?php endif; ?>
-	<?php }
 	
 	/**
 	 * Add script to footer
@@ -278,6 +315,72 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 		}
 		wp_die(1);
 	}
+	
+	/**
+	 * Add shortcodes to CF Geo Plugin table
+	 */
+	function shortcode_table( $str ){
+		if(!isset($_SESSION[ CFGP_PREFIX . 'api_session' ])) return;
+		
+		$session = $_SESSION[ CFGP_PREFIX . 'api_session' ];
+	?>
+	<?php if(isset($session['street'])) : ?>
+		<tr>
+			<td><kbd>[cfgeo return="street"]</kbd> <i class="badge">(GPS)</i></td>
+			<td><?php echo $session['street']; ?></td>
+		</tr>
+	<?php endif; ?>
+	<?php if(isset($session['street_number'])) : ?>
+		<tr>
+			<td><kbd>[cfgeo return="street_number"]</kbd> <i class="badge">(GPS)</i></td>
+			<td><?php echo $session['street_number']; ?></td>
+		</tr>
+	<?php endif; ?>
+	<?php }
+	
+	/**
+	 * Add beta shortcodes to CF Geo Plugin table
+	 */
+	function beta_shortcode_table( $str ){
+		if(!isset($_SESSION[ CFGP_PREFIX . 'api_session' ])) return;
+		
+		$session = $_SESSION[ CFGP_PREFIX . 'api_session' ];
+	?>
+	<?php if(isset($session['street'])) : ?>
+		<tr>
+			<td><kbd>[cfgeo_street]</kbd> <i class="badge">(GPS)</i></td>
+			<td><?php echo $session['street']; ?></td>
+		</tr>
+	<?php endif; ?>
+	<?php if(isset($session['street_number'])) : ?>
+		<tr>
+			<td><kbd>[cfgeo_street_number]</kbd> <i class="badge">(GPS)</i></td>
+			<td><?php echo $session['street_number']; ?></td>
+		</tr>
+	<?php endif; ?>
+	<?php }
+	
+	/**
+	 * Add tags to CF Geo Plugin table
+	 */
+	function tags_table( $str ){
+		if(!isset($_SESSION[ CFGP_PREFIX . 'api_session' ])) return;
+		
+		$session = $_SESSION[ CFGP_PREFIX . 'api_session' ];
+	?>
+	<?php if(isset($session['street'])) : ?>
+		<tr>
+			<td><kbd>%%street%%</kbd> <i class="badge">(GPS)</i></td>
+			<td><?php echo $session['street']; ?></td>
+		</tr>
+	<?php endif; ?>
+	<?php if(isset($session['street_number'])) : ?>
+		<tr>
+			<td><kbd>%%street_number%%</kbd> <i class="badge">(GPS)</i></td>
+			<td><?php echo $session['street_number']; ?></td>
+		</tr>
+	<?php endif; ?>
+	<?php }
 	
 	/**
 	 * Sanitize string or array (FUTURE REMOVED)
@@ -331,15 +434,29 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 			CFGP_GPS_NAME . '-gps',
 			'CFGEO_GPS',
 			array(
-				'ajax_url'			=> self_admin_url( 'admin-ajax.php' ),
+				'ajax_url'		=> admin_url( 'admin-ajax.php' ),
 				'key'			=> $this->option['map_api_key'],
 				'language'		=> get_bloginfo('language'),
-				'nonce'			=> wp_create_nonce( "cf-geoplugin-gps-set" )
+				'nonce'			=> wp_create_nonce( 'cf-geoplugin-gps-set' ),
+				'label'			=> array(
+					'ZERO_RESULTS'		=> __('There is no results for this search.',CFGP_GPS_NAME),
+					'OVER_DAILY_LIMIT'		=> __('Your daily limit is reached. Check your billing settings.',CFGP_GPS_NAME),
+					'OVER_QUERY_LIMIT'		=> __('Your account quota is reached.',CFGP_GPS_NAME),
+					'REQUEST_DENIED'		=> __('Your request is denied.',CFGP_GPS_NAME),
+					'INVALID_REQUEST'		=> __('Your send bad or broken request to you API call.',CFGP_GPS_NAME),
+					'DATA_UNKNOWN_ERROR'			=> __('Request could not be processed due to a server error. The request may succeed if you try again.',CFGP_GPS_NAME),
+					'PERMISSION_DENIED'		=> __('User denied the request for Geolocation.',CFGP_GPS_NAME),
+					'POSITION_UNAVAILABLE'	=> __('Location information is unavailable.',CFGP_GPS_NAME),
+					'TIMEOUT'				=> __('The request to get user location timed out.',CFGP_GPS_NAME),
+					'UNKNOWN_ERROR'			=> __('An unknown error occurred.',CFGP_GPS_NAME),
+					'not_supported'			=> __('Geolocation is not supported by this browser.',CFGP_GPS_NAME),
+					'google_geocode'		=> __('Google Geocode: %s',CFGP_GPS_NAME),
+				)
 			)
 		);
 		wp_enqueue_script( CFGP_GPS_NAME . '-gps' );
 	}
-	
+
 	/* 
 	 * Get plugin version
 	*/
@@ -439,7 +556,7 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	 */
 	public static function activation(){
 		if( !function_exists('get_plugin_data') ){
-			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+			require_once( WP_ADMIN_DIR . '/includes/plugin.php' );
 		}
 		// dependent plugin
 		$parent_plugin = 'cf-geoplugin/cf-geoplugin.php';
@@ -521,7 +638,7 @@ add_action('init', function() {
 /* 
  * Initialize plugin in admin
 */
-if(is_admin()){
+if(is_admin()) {
 	add_action('admin_init', array('CF_Geoplugin_GPS', 'admin_init'));
 }
 endif;

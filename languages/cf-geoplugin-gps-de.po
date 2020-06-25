@@ -1,0 +1,155 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: GPS for CF Geo Plugin\n"
+"POT-Creation-Date: 2020-06-25 11:23+0200\n"
+"PO-Revision-Date: 2020-06-25 11:23+0200\n"
+"Last-Translator: \n"
+"Language-Team: INFINITUM FORM\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3.1\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: cf-geoplugin-gps.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: cf-geoplugin-gps.php:239
+#, fuzzy, php-format
+msgid "Important upgrade notice for the version %s:"
+msgstr "Wichtiger Aktualisierungshinweis für die Version %s:"
+
+#: cf-geoplugin-gps.php:253
+#, fuzzy
+msgid ""
+"NOTE: Before doing the update, it would be a good idea to backup your "
+"WordPress installations and settings."
+msgstr ""
+"HINWEIS: Bevor Sie das Update durchführen, wäre es eine gute Idee, Ihre "
+"WordPress-Installationen und -Einstellungen zu sichern."
+
+#: cf-geoplugin-gps.php:442
+#, fuzzy
+msgid "There is no results for this search."
+msgstr "Es liegen keine Ergebnisse für diese Suche vor."
+
+#: cf-geoplugin-gps.php:443
+#, fuzzy
+msgid "Your daily limit is reached. Check your billing settings."
+msgstr ""
+"Ihr Tageslimit ist erreicht. Überprüfen Sie Ihre Rechnungseinstellungen."
+
+#: cf-geoplugin-gps.php:444
+#, fuzzy
+msgid "Your account quota is reached."
+msgstr "Ihr Kontokontingent ist erreicht."
+
+#: cf-geoplugin-gps.php:445
+#, fuzzy
+msgid "Your request is denied."
+msgstr "Ihre Anfrage wird abgelehnt."
+
+#: cf-geoplugin-gps.php:446
+#, fuzzy
+msgid "Your send bad or broken request to you API call."
+msgstr ""
+"Ihre fehlerhafte oder fehlerhafte Anforderung an Ihren API-Aufruf senden."
+
+#: cf-geoplugin-gps.php:447
+#, fuzzy
+msgid ""
+"Request could not be processed due to a server error. The request may "
+"succeed if you try again."
+msgstr ""
+"Die Anforderung konnte aufgrund eines Serverfehlers nicht verarbeitet "
+"werden. Die Anforderung kann erfolgreich sein, wenn Sie es erneut versuchen."
+
+#: cf-geoplugin-gps.php:448
+#, fuzzy
+msgid "User denied the request for Geolocation."
+msgstr "Der Benutzer hat die Anforderung für Geolocation abgelehnt."
+
+#: cf-geoplugin-gps.php:449
+msgid "Location information is unavailable."
+msgstr "Standortinformationen sind nicht verfügbar."
+
+#: cf-geoplugin-gps.php:450
+msgid "The request to get user location timed out."
+msgstr ""
+"Die Anfrage, den Standort des Benutzers zu ermitteln, wurde zeitlich "
+"begrenzt."
+
+#: cf-geoplugin-gps.php:451
+msgid "An unknown error occurred."
+msgstr "Ein unbekannter Fehler ist aufgetreten."
+
+#: cf-geoplugin-gps.php:452
+msgid "Geolocation is not supported by this browser."
+msgstr ""
+"Ortsbestimmung (Geolocation) wird von diesem Browser nicht unterstützt."
+
+#: cf-geoplugin-gps.php:453
+#, fuzzy, php-format
+msgid "Google Geocode: %s"
+msgstr "Google Geocode: %s"
+
+#: cf-geoplugin-gps.php:544
+#, fuzzy
+msgid "Activation Has Failed"
+msgstr "Die Aktivierung ist fehlgeschlagen"
+
+#: cf-geoplugin-gps.php:573
+#, fuzzy, php-format
+msgid "You need first to install %1$s in order to use this %2$s."
+msgstr ""
+"Sie müssen zuerst %1 s installieren, um diese %2 s verwenden zu können."
+
+#: cf-geoplugin-gps.php:578
+#, fuzzy, php-format
+msgid ""
+"You need first to upgrade your %1$s to version %2$s or above in order to use "
+"this %3$s."
+msgstr ""
+"Sie müssen zuerst Ihre %1 es auf Version %2 es oder höher aktualisieren, um "
+"diese %3 s verwenden zu können."
+
+#: cf-geoplugin-gps.php:584
+#, fuzzy, php-format
+msgid "%1$s need to be activated in order to use this %2$s."
+msgstr "%1 muss aktiviert werden, um diese %2 s verwenden zu können."
+
+#. Plugin Name of the plugin/theme
+#, fuzzy
+msgid "WordPress Geo Plugin GPS extension"
+msgstr "WordPress Geo Plugin GPS-Erweiterung"
+
+#. Plugin URI of the plugin/theme
+#, fuzzy
+msgid "http://cfgeoplugin.com/"
+msgstr "http://cfgeoplugin.com/"
+
+#. Description of the plugin/theme
+#, fuzzy
+msgid "WordPress GPS module for the CF Geo Plugin."
+msgstr "WordPress GPS-Modul für das CF Geo Plugin."
+
+#. Author of the plugin/theme
+#, fuzzy
+msgid "INFINITUM FORM"
+msgstr "INFINITUM FORM"
+
+#. Author URI of the plugin/theme
+#, fuzzy
+msgid "https://infinitumform.com/"
+msgstr "https://infinitumform.com/"
+
+#, fuzzy
+#~ msgid "GPS for CF Geo Plugin"
+#~ msgstr "GPS für CF Geo Plugin"
