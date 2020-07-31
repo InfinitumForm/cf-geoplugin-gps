@@ -25,28 +25,6 @@
 
 ;(function($){
 	var info = [],
-		// Safe redirection
-		redirect = function( url ){
-			var X = setTimeout(function(){
-				window.location.replace(url);
-				return true;
-			},300);
-
-			if( window.location = url ){
-				clearTimeout(X);
-				return true;
-			} else {
-				if( window.location.href = url ){
-					clearTimeout(X);
-					return true;
-				}else{
-					clearTimeout(X);
-					window.location.replace(url);
-					return true;
-				}
-			}
-			return false;
-		},
 		// Send GPS position
 		send_position = function( position ){
 			var latitude = position.coords.latitude,
@@ -79,8 +57,20 @@
 						geo.cityCode = geo.locality.short_name;
 					}
 					
+					if(geo.administrative_area_level_1){
+						geo.region = geo.administrative_area_level_1.long_name;
+						geo.state = geo.administrative_area_level_1.long_name;
+						geo.regionName = geo.administrative_area_level_1.long_name;
+					}
+					
 					if(geo.political){
 						geo.region = geo.political.long_name;
+						geo.state = geo.political.long_name;
+						geo.regionName = geo.political.long_name;
+					}
+					
+					if(geo.postal_code){
+						geo.zip = geo.postal_code.long_name;
 					}
 					
 					if(geo.route){
@@ -112,8 +102,23 @@
 						data : geo,
 						_ajax_nonce : CFGEO_GPS.nonce
 					}).done(function(returns){
-						if(returns == 1){
-							location.reload();
+						if(returns){
+							var href = window.location.href;
+							
+							if(href.indexOf('?') > -1)
+							{
+								window.location.href = href + '&gps=1';
+								location.href = href + '&gps=1';
+								location = href + '&gps=1';
+							}
+							else
+							{
+								window.location.href = href + '?gps=1';
+								location.href = href + '?gps=1';
+								location = href + '?gps=1';
+							}
+							
+							window.history.forward(1);
 						}
 					});
 				}

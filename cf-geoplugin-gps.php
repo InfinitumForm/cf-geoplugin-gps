@@ -8,7 +8,7 @@
  * Plugin Name:       WordPress Geo Plugin GPS extension
  * Plugin URI:        http://cfgeoplugin.com/
  * Description:       WordPress GPS module for the CF Geo Plugin.
- * Version:           1.0.6
+ * Version:           1.0.9
  * Author:            INFINITUM FORM
  * Author URI:        https://infinitumform.com/
  * License:           GPL-2.0+
@@ -121,7 +121,7 @@ if ( ! defined( 'CFGP_GPS_ASSETS' ) )	define( 'CFGP_GPS_ASSETS', CFGP_GPS_URL . 
 // Timestamp
 if( ! defined( 'CFGP_GPS_TIME' ) )		define( 'CFGP_GPS_TIME', time() );
 // Session
-if( ! defined( 'CFGP_GPS_SESSION' ) )	define( 'CFGP_GPS_SESSION', 5 );
+if( ! defined( 'CFGP_GPS_SESSION' ) )	define( 'CFGP_GPS_SESSION', 15 );
 // Plugin name
 if ( ! defined( 'CFGP_GPS_NAME' ) )		define( 'CFGP_GPS_NAME', 'cf-geoplugin-gps');
 $cfgp_gps_version = NULL;
@@ -189,8 +189,12 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 		$this->add_action('plugins_loaded', 'load_textdomain');
 		
 		// Add script to footer
-		if(!isset($session['gps']) || (isset($session['gps']) && !$session['gps'])){
+		if(!isset($session['gps']) || (isset($session['gps']) && $session['gps']!=1)){
 			$this->add_action( 'wp_enqueue_scripts', 'register_scripts' );
+		}
+		
+		if(isset($_GET['gps']) && $_GET['gps'] == 1){
+			$this->add_action('send_headers', 'clear_cache');
 		}
 		
 		// Add shortcodes to CF Geo Plugin table
@@ -204,8 +208,43 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 		$this->add_filter('cf_geeoplugin_api_get_geodata', 'api_get_geodata', 1, 1);
 		$this->add_filter('cf_geeoplugin_api_render_response', 'api_render_response', 1, 1);
 		
+		// Add privacy policy
+		$this->add_action( 'admin_init', 'privacy_policy' );
+		
 		// Plugin update message
 		$this->add_action( 'in_plugin_update_message-cf-geoplugin-gps/cf-geoplugin-gps.php', 'in_plugin_update_message', 10, 2 );
+	}
+	
+	function privacy_policy() {
+		if ( ! function_exists( 'wp_add_privacy_policy_content' ) ) {
+			return;
+		}
+	 
+		$content = sprintf(
+			__( 'This site uses the WordPress Geo Plugin GPS extension (formerly: CF Geo Plugin GPS extension) to display public visitor information based on the GPS location that can then be collected or used for various purposes depending on the settings of the plugin.
+			
+			The WordPress Geo Plugin GPS extension allows all CF Geo Plugin users to locate their visitors using a GPS location. Using this plugin you solve the biggest problem of locating mobile visitors and correcting their location errors.
+			
+			This website uses API services, technology and goods from the WordPress Geo Plugin GPS extension and that part belongs to the <a href="%1$s" target="_blank">WordPress Geo Plugin Privacy Policy</a>.
+			
+			Also, part of the services, technology and goods come from the Google Geocode API and that part belongs to the <a href="%2$s" target="_blank">Google Privacy Policy</a>',
+			CFGP_NAME ),
+			CFGP_STORE . '/privacy-policy/',
+			'https://policies.google.com/privacy'
+		);
+	 
+		wp_add_privacy_policy_content(
+			'WordPress Geo Plugin GPS extension',
+			wp_kses_post( wpautop( $content, false ) )
+		);
+	}
+	
+	public function clear_cache(){
+		header("Expires: Tue, 01 Jan 2000 00:00:00 GMT");
+		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+		header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+		header("Cache-Control: post-check=0, pre-check=0", false);
+		header("Pragma: no-cache");
 	}
 	
 	/**
@@ -287,6 +326,9 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 	 */
 	function ajax_set() {
 		check_ajax_referer( 'cf-geoplugin-gps-set', '_ajax_nonce' );
+		
+		$this->clear_cache();
+		
 		if(!isset($_REQUEST['data'])) wp_die(-1);
 		
 		$data = method_exists('CF_Geoplugin_Global', 'sanitize') ? parent::sanitize( $_REQUEST['data'] ) : self::____sanitize( $_REQUEST['data'] );
@@ -311,9 +353,12 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 		{
 			$_SESSION[ $session_api ] = array_merge($session, $gps);
 			$session_expire = CFGP_PREFIX . 'session_expire';
-			$_SESSION[ $session_expire ] = (time() + (60 * 60 * 24));
+			$_SESSION[ $session_expire ] = (time() + (60 * CFGP_GPS_SESSION));
+
+			header('Content-Type: application/json');
+			wp_die(json_encode($_SESSION));
 		}
-		wp_die(1);
+		wp_die(0);
 	}
 	
 	/**
@@ -439,12 +484,12 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 				'language'		=> get_bloginfo('language'),
 				'nonce'			=> wp_create_nonce( 'cf-geoplugin-gps-set' ),
 				'label'			=> array(
-					'ZERO_RESULTS'		=> __('There is no results for this search.',CFGP_GPS_NAME),
+					'ZERO_RESULTS'			=> __('There is no results for this search.',CFGP_GPS_NAME),
 					'OVER_DAILY_LIMIT'		=> __('Your daily limit is reached. Check your billing settings.',CFGP_GPS_NAME),
 					'OVER_QUERY_LIMIT'		=> __('Your account quota is reached.',CFGP_GPS_NAME),
 					'REQUEST_DENIED'		=> __('Your request is denied.',CFGP_GPS_NAME),
 					'INVALID_REQUEST'		=> __('Your send bad or broken request to you API call.',CFGP_GPS_NAME),
-					'DATA_UNKNOWN_ERROR'			=> __('Request could not be processed due to a server error. The request may succeed if you try again.',CFGP_GPS_NAME),
+					'DATA_UNKNOWN_ERROR'	=> __('Request could not be processed due to a server error. The request may succeed if you try again.',CFGP_GPS_NAME),
 					'PERMISSION_DENIED'		=> __('User denied the request for Geolocation.',CFGP_GPS_NAME),
 					'POSITION_UNAVAILABLE'	=> __('Location information is unavailable.',CFGP_GPS_NAME),
 					'TIMEOUT'				=> __('The request to get user location timed out.',CFGP_GPS_NAME),
@@ -570,18 +615,18 @@ class CF_Geoplugin_GPS extends CF_Geoplugin_Global
 			$parent_plugin_data = get_plugin_data( WP_PLUGIN_DIR.'/'.$parent_plugin);
 			$category_error = (!version_compare ( $parent_plugin_data['Version'], $version_to_check, '>=') ? true : false);
 		} else {
-			update_option('cf-geoplugin-gps-activation-message', sprintf(__('You need first to install %1$s in order to use this %2$s.', CFGP_GPS_NAME), '<a href="https://wordpress.org/plugins/cf-geoplugin/" target="_blank">CF Geo Plugin</a>', '<b>CF Geo Plugin GPS addon</b>'));
+			update_option('cf-geoplugin-gps-activation-message', sprintf(__('You need first to install %1$s in order to use this %2$s addon.', CFGP_GPS_NAME), '<a href="https://wordpress.org/plugins/cf-geoplugin/" target="_blank">CF Geo Plugin</a>', '<b>CF Geo Plugin GPS</b>'));
 			return;
 		}  
 
 		if ( $category_error ) {
-			update_option('cf-geoplugin-gps-activation-message', sprintf(__('You need first to upgrade your %1$s to version %2$s or above in order to use this %3$s.', CFGP_GPS_NAME), '<b>CF Geo Plugin</b>', "<b>{$version_to_check}</b>", '<b>CF Geo Plugin GPS addon</b>'));
+			update_option('cf-geoplugin-gps-activation-message', sprintf(__('You need first to upgrade your %1$s to version %2$s or above in order to use this %3$s addon.', CFGP_GPS_NAME), '<b>CF Geo Plugin</b>', "<b>{$version_to_check}</b>", '<b>CF Geo Plugin GPS</b>'));
 			return;
 		}
 		
 		if(!is_plugin_active($parent_plugin))
 		{
-			update_option('cf-geoplugin-gps-activation-message', sprintf(__('%1$s need to be activated in order to use this %2$s.', CFGP_GPS_NAME), '<b>CF Geo Plugin</b>', '<b>CF Geo Plugin GPS addon</b>'));
+			update_option('cf-geoplugin-gps-activation-message', sprintf(__('%1$s need to be activated in order to use this %2$s addon.', CFGP_GPS_NAME), '<b>CF Geo Plugin</b>', '<b>CF Geo Plugin GPS</b>'));
 			return;
 		}
 	}
