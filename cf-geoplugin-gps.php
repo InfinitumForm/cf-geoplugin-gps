@@ -57,5 +57,18 @@ include_once CFGP_GPS_CLASS . '/Requirements.php';
  */
 $CFGP_GPS_Requirements = new CFGP_GPS_Requirements(array('file' => CFGP_GPS_FILE));
 if($CFGP_GPS_Requirements->passes()) :
-
+	// Dynamic action
+	do_action('cfgp_gps/before_plugin_setup');
+	// Initializing class
+	include_once CFGP_GPS_INC . '/Init.php';
+	// Include dependencies
+	CFGP_GPS_Init::dependencies();
+	// Plugin activation
+	CFGP_GPS_Init::activation();
+	// Plugin deactivation
+	CFGP_GPS_Init::deactivation();
+	// Run plugin
+	CFGP_GPS_Init::run();
+	// Dynamic action
+	do_action('cfgp_gps/after_plugin_setup');
 endif;

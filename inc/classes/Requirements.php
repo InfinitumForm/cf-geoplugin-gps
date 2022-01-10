@@ -39,6 +39,7 @@ if(!class_exists('CFGP_GPS_Requirements')) : class CFGP_GPS_Requirements {
 		}
 		
 		add_action( "in_plugin_update_message-{$this->slug}/{$this->slug}.php", array(&$this, 'in_plugin_update_message'), 10, 2 );
+		add_action( 'admin_init', array(&$this, 'privacy_policy') );
 	}
 	
 	/*
@@ -170,5 +171,32 @@ font-weight:600;
 </div>
 </div> 
 		<?php endif;
+	}
+	
+	/*
+	 * Privacy Policy
+	 */
+	public function privacy_policy() {
+		if ( ! function_exists( 'wp_add_privacy_policy_content' ) ) {
+			return;
+		}
+	 
+		$content = sprintf(
+			__( 'This site uses the WordPress Geo Plugin GPS extension (formerly: CF Geo Plugin GPS extension) to display public visitor information based on the GPS location that can then be collected or used for various purposes depending on the settings of the plugin.
+			
+			The WordPress Geo Plugin GPS extension allows all CF Geo Plugin users to locate their visitors using a GPS location. Using this plugin you solve the biggest problem of locating mobile visitors and correcting their location errors.
+			
+			This website uses API services, technology and goods from the WordPress Geo Plugin GPS extension and that part belongs to the <a href="%1$s" target="_blank">WordPress Geo Plugin Privacy Policy</a>.
+			
+			Also, part of the services, technology and goods come from the Google Geocode API and that part belongs to the <a href="%2$s" target="_blank">Google Privacy Policy</a>',
+			CFGP_NAME ),
+			CFGP_STORE . '/privacy-policy/',
+			'https://policies.google.com/privacy'
+		);
+	 
+		wp_add_privacy_policy_content(
+			'WordPress Geo Plugin GPS extension',
+			wp_kses_post( wpautop( $content, false ) )
+		);
 	}
 } endif;
