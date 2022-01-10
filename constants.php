@@ -49,6 +49,9 @@ if ( ! defined( 'CFGP_INC' ) )			define( 'CFGP_INC', CFGP_ROOT . '/inc' );
 // Classes directory
 if ( ! defined( 'CFGP_CLASS' ) )		define( 'CFGP_CLASS', CFGP_INC . '/classes' );
 
+// Timestamp
+if( ! defined( 'CFGP_TIME' ) )			define( 'CFGP_TIME', time() );
+
 // Main plugin name
 if ( ! defined( 'CFGP_NAME' ) )			define( 'CFGP_NAME', 'cf-geoplugin');
 
@@ -74,7 +77,7 @@ if ( ! defined( 'CFGP_GPS_URL' ) )		define( 'CFGP_GPS_URL', rtrim(plugin_dir_url
 if ( ! defined( 'CFGP_GPS_JS' ) )		define( 'CFGP_GPS_JS', CFGP_GPS_URL . '/js' );
 
 // Timestamp
-if( ! defined( 'CFGP_GPS_TIME' ) )		define( 'CFGP_GPS_TIME', time() );
+if( ! defined( 'CFGP_GPS_TIME' ) )		define( 'CFGP_GPS_TIME', CFGP_TIME );
 
 // Session
 if( ! defined( 'CFGP_GPS_SESSION' ) )	define( 'CFGP_GPS_SESSION', 15 );
@@ -106,3 +109,10 @@ if( ! defined( 'CFGP_GPS_MULTISITE' ) )
 }
 
 if( ! defined( 'CFGP_GPS_MULTISITE' ) ) define( 'CFGP_GPS_MULTISITE', false );
+
+
+// Check is network admin
+if( ! defined( 'CFGP_NETWORK_ADMIN' ) ) define( 'CFGP_NETWORK_ADMIN', ( function_exists('is_network_admin') && is_network_admin() ) );
+
+// Check is defender activated
+if( ! defined( 'CFGP_DEFENDER_ACTIVATED' ) ) define( 'CFGP_DEFENDER_ACTIVATED', false ); //- DEBUG

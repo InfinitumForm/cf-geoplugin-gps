@@ -2,7 +2,7 @@
 /**
  * Initialize settings
  *
- * @version       8.0.0
+ * @version       2.0.0
  *
  */
  
@@ -15,9 +15,13 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 		// Do translations
 		add_action('plugins_loaded', array(&$this, 'textdomain'));
 		
+		// Push plugin to be last one
+		add_action('activated_plugin', array(&$this, 'force_plugin_to_be_last'));
+
+		
 		// Call main classes
 		$classes = apply_filters('cfgp_gps/init/classes', array(
-			
+		//	'CFGP_API',					// API class
 		));
 		
 		$classes = apply_filters('cfgp_gps/init/included/classes', $classes);
@@ -32,9 +36,26 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 		do_action('cfgp_gps/init', $this);
 	}
 	
+	
+	/**
+	 * Run this plugin last
+	 * @since     2.0.0
+	 */
+	public function force_plugin_to_be_last()
+	{
+		$path = str_replace( WP_PLUGIN_DIR . '/', '', CFGP_FILE );
+		if ( $plugins = get_option( 'active_plugins' ) ) {
+			if ( $key = array_search( $path, $plugins ) ) {
+				array_splice( $plugins, $key, 1 );
+				array_push( $plugins, $path );
+				update_option( 'active_plugins', $plugins );
+			}
+		}
+	}
+	
 	/**
 	 * Run dry plugin dependencies
-	 * @since     8.0.0
+	 * @since     2.0.0
 	 */
 	public static function dependencies(){
 		// Enqueue Scripts
@@ -52,6 +73,7 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 			CFGP_CLASS . '/Global.php',					// Global class
 			CFGP_CLASS . '/IP.php',						// IP class
 			CFGP_CLASS . '/API.php',					// API class
+			CFGP_GPS_CLASS . '/GPS.php',				// GPS class
 		));
 		foreach($includes as $include){
 			if( file_exists($include) ) {
@@ -64,7 +86,7 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 	
 	/**
 	 * Run plugin actions and filters
-	 * @since     8.0.0
+	 * @since     2.0.0
 	 */
 	public static function run() {
 		$instance = self::instance();
@@ -74,7 +96,7 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 	
 	/**
 	 * Load translations
-	 * @since     8.0.0
+	 * @since     2.0.0
 	 */
 	public function textdomain() {
 		if ( is_textdomain_loaded( CFGP_GPS_NAME ) ) {
@@ -118,7 +140,7 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 	
 	/**
 	 * Enqueue Scripts
-	 * @since     8.0.0
+	 * @since     2.0.0
 	 */
 	public static function wp_enqueue_scripts() {
 		wp_register_script( CFGP_GPS_NAME . '-gps', CFGP_GPS_JS . '/cfgp-gps.js', array( 'jquery' ), CFGP_GPS_VERSION, true );
@@ -151,7 +173,7 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 	
 	/**
 	 * Run script on the plugin activation
-	 * @since     8.0.0
+	 * @since     2.0.0
 	 */
 	public static function activation() {
 		return CFGP_Global::register_activation_hook(function(){
@@ -187,7 +209,7 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 	
 	/**
 	 * Run script on the plugin deactivation
-	 * @since     8.0.0
+	 * @since     2.0.0
 	 */
 	public static function deactivation() {
 		return CFGP_Global::register_deactivation_hook(function(){
@@ -207,7 +229,7 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 	
 	/* 
 	 * Instance
-	 * @verson    8.0.0
+	 * @verson    2.0.0
 	 */
 	public static function instance() {
 		$class = self::class;
