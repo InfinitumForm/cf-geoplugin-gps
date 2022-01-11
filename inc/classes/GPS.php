@@ -12,18 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 	
 	private function __construct(){
+		// Do AJAX
 		$this->add_action('wp_ajax_cf_geoplugin_gps_set', 'ajax_set');
 		$this->add_action('wp_ajax_nopriv_cf_geoplugin_gps_set', 'ajax_set');
-		
+		// Stop script when all data is on the place
 		if( isset($_GET['gps']) && $_GET['gps'] == 1 ) {
 			CFGP_U::setcookie('cfgp_gps', 1, (MINUTE_IN_SECONDS * CFGP_SESSION));
 			$this->add_action('wp_enqueue_scripts', 'deregister_scripts', 99);
 		}
-		
+		// Stop script when cookie is setup
 		if( isset($_COOKIE['cfgp_gps']) && $_COOKIE['cfgp_gps'] == 1 ) {
 			$this->add_action('wp_enqueue_scripts', 'deregister_scripts', 99);
 		}
-		
 	}
 	
 	/**
@@ -36,20 +36,17 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 	/**
 	 * Add script to footer
 	 */
-	public function ajax_set() {
-		check_ajax_referer( 'cf-geoplugin-gps-set', '_ajax_nonce' );
-		
+	public function ajax_set() {		
+		// Verify nonce
 		if( wp_verify_nonce( $_REQUEST['_ajax_nonce'], 'cf-geoplugin-gps-set' ) ) {
 			echo -1; exit;
-		}
-		
+		}		
+		// GPS data missing
 		if(!isset($_REQUEST['data'])) {
 			echo -2; exit;
-		}
-		
+		}		
 		// Gnerate session slug
 		$ip_slug = str_replace('.', '_', CFGP_U::api('ip') );
-		
 		// Default results
 		$GEO = $DNS = array();
 		if( $transient = get_transient("cfgp-api-{$ip_slug}") ) {
@@ -58,10 +55,8 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 		} else {
 			echo -3; exit;
 		}
-		
 		// Return new data
 		$returns = array();
-		
 		// Get new data
 		if($_REQUEST['data']) {
 			$GEO['gps'] = 1;
@@ -71,9 +66,8 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 				}
 			}
 		}
-		
+		// Set new data
 		if( !empty($returns) ) {
-			
 			$GEO = array_merge($GEO, $returns);
 			
 			set_transient("cfgp-api-{$ip_slug}", array(
@@ -83,9 +77,9 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 			
 			header('Content-Type: application/json');
 			echo json_encode($returns); exit;
-		} else {
-			echo 0; exit;
 		}
+		// Empty
+		echo 0; exit;
 	}
 	
 	/**
