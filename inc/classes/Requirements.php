@@ -184,13 +184,13 @@ font-weight:600;
 		$privacy_poilicy = array(
 			__( 'This site uses the WordPress Geo Plugin GPS extension (formerly: CF Geo Plugin GPS extension) to display public visitor information based on the GPS location that can then be collected or used for various purposes depending on the settings of the plugin.', CFGP_NAME ),
 			__( 'The WordPress Geo Plugin GPS extension allows all CF Geo Plugin users to locate their visitors using a GPS location. Using this plugin you solve the biggest problem of locating mobile visitors and correcting their location errors.', CFGP_NAME ),
-			sprintf( __( 'This website uses API services, technology and goods from the WordPress Geo Plugin GPS extension and that part belongs to the <a href="%1$s" target="_blank">WordPress Geo Plugin Privacy Policy</a>.', CFGP_NAME ), CFGP_STORE . '/privacy-policy/' ),
-			sprintf( __( 'Also, part of the services, technology and goods come from the Google Geocode API and that part belongs to the <a href="%2$s" target="_blank">Google Privacy Policy</a>', CFGP_NAME ), 'https://policies.google.com/privacy' )
+			sprintf( __( 'This website uses API services, technology and goods from the WordPress Geo Plugin GPS extension and that part belongs to the <a href="%s" target="_blank">WordPress Geo Plugin Privacy Policy</a>.', CFGP_NAME ), CFGP_STORE . '/privacy-policy/' ),
+			sprintf( __( 'Also, part of the services, technology and goods come from the Google Geocode API and that part belongs to the <a href="%s" target="_blank">Google Privacy Policy</a>', CFGP_NAME ), 'https://policies.google.com/privacy' )
 		);
 	 
 		wp_add_privacy_policy_content(
 			__( 'WordPress Geo Plugin GPS extension', CFGP_NAME ),
-			wp_kses_post( wpautop( join(PHP_EOL, $privacy_poilicy), false ) )
+			wp_kses_post( wpautop( join((PHP_EOL . PHP_EOL), $privacy_poilicy), false ) )
 		);
 	}
 } endif;
