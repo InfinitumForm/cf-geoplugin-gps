@@ -3,9 +3,9 @@ Contributors: ivijanstefan, creativform
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=creativform@gmail.com
 Tags: gps, geolocation, cf-geoplugin, geocoding, google-maps, woocommerce, store-locator, seo, geomarketing, geo plugin, geotargeting, geofencing
 Requires at least: 3.0
-Tested up to: 5.4
-Requires PHP: 5.6.0
-Stable tag: 1.0.9
+Tested up to: 5.7
+Requires PHP: 7.0.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,17 @@ No! This plugin cannot be used to track visitors. Plugin only returns some basic
 
 == Changelog ==
 
+= 2.0.0 =
+* Adapted algorithm for new version of CF Geo Plugin 8.0.0 and above
+
+= 1.1.0 =
+* Fixed redirection problem
+* Improved session control
+* Improved GPS localization
+
+= 1.0.10 =
+* Fixed issue with `session_write_close()`
+
 = 1.0.9 =
 * IMPORTANT UPDATE: Fixed page redirection
 * IMPORTANT UPDATE: Fixed API data merging
@@ -118,14 +129,8 @@ No! This plugin cannot be used to track visitors. Plugin only returns some basic
 
 == Upgrade Notice ==
 
-= 1.0.9 =
-* IMPORTANT UPDATE: Fixed page redirection
-* IMPORTANT UPDATE: Fixed API data merging
-* IMPORTANT UPDATE: Fixed missing data
-
-= 1.0.8 =
-* IMPORTANT UPDATE: Geocode API update
-* IMPORTANT UPDATE: Fixed constant refreshing
+= 2.0.0 =
+* Adapted algorithm for new version of CF Geo Plugin 8.0.0 and above
 
 == Other Notes ==
 
