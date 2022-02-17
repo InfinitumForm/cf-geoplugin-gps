@@ -104,6 +104,16 @@
 						if(returns.success === true){
 							var href = window.location.href;
 							
+							if( typeof caches !== 'undefined' ) {
+								caches.keys().then(function(keyList) {
+									if( typeof Promise !== 'undefined' ) {
+										Promise.all(keyList.map( function(key) {
+											caches.delete(key);
+										} ));
+									}
+								} );
+							}
+							
 							if(href.indexOf('?') > -1)
 							{
 								window.location.href = href + '&gps=1';
