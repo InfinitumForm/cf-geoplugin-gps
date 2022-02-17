@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WordPress Geo Plugin GPS extension\n"
-"POT-Creation-Date: 2022-01-11 13:17+0100\n"
-"PO-Revision-Date: 2022-01-11 13:20+0100\n"
+"POT-Creation-Date: 2022-02-17 08:23+0100\n"
+"PO-Revision-Date: 2022-02-17 08:28+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sr_RS\n"
@@ -22,27 +22,27 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
-#: inc/Init.php:127
+#: inc/Init.php:126
 msgid "There is no results for this search."
 msgstr "Нема резултата за ову претрагу."
 
-#: inc/Init.php:128
+#: inc/Init.php:127
 msgid "Your daily limit is reached. Check your billing settings."
 msgstr "Ваш дневни лимит је достигнут. Проверите подешавања наплате."
 
-#: inc/Init.php:129
+#: inc/Init.php:128
 msgid "Your account quota is reached."
 msgstr "Постигнута је квота вашег рачуна."
 
-#: inc/Init.php:130
+#: inc/Init.php:129
 msgid "Your request is denied."
 msgstr "Ваш захтев је одбијен."
 
-#: inc/Init.php:131
+#: inc/Init.php:130
 msgid "Your send bad or broken request to you API call."
 msgstr "Послали сте лош или погрешан захтев према АПИ-ју."
 
-#: inc/Init.php:132
+#: inc/Init.php:131
 msgid ""
 "Request could not be processed due to a server error. The request may "
 "succeed if you try again."
@@ -50,30 +50,42 @@ msgstr ""
 "Захтев није успео да се обради због грешке на серверу. Захтев ће можда "
 "успети ако покушате поново."
 
-#: inc/Init.php:133
+#: inc/Init.php:132
 msgid "User denied the request for Geolocation."
 msgstr "Корисник је одбио захтев за гео локацију."
 
-#: inc/Init.php:134
+#: inc/Init.php:133
 msgid "Location information is unavailable."
 msgstr "Подаци о локацији нису доступни."
 
-#: inc/Init.php:135
+#: inc/Init.php:134
 msgid "The request to get user location timed out."
 msgstr "Захтев да се детектује локација корисника је истекао."
 
-#: inc/Init.php:136
+#: inc/Init.php:135
 msgid "An unknown error occurred."
 msgstr "Дошло је до непознате грешке."
 
-#: inc/Init.php:137
+#: inc/Init.php:136
 msgid "Geolocation is not supported by this browser."
 msgstr "Геолокација није подржана у овом прегледачу."
 
-#: inc/Init.php:138
+#: inc/Init.php:137
 #, php-format
 msgid "Google Geocode: %s"
-msgstr "Google Geocode: %s"
+msgstr "Гугл Геокод: %s"
+
+#: inc/classes/GPS.php:76
+msgid "GPS data missing."
+msgstr "Недостају ГПС подаци."
+
+#: inc/classes/GPS.php:90
+msgid "Could not retrieve geo data."
+msgstr "Није могуће вратити гео податке."
+
+#: inc/classes/GPS.php:137
+msgid "No GPS data."
+msgstr "Нема ГПС података."
 
 #: inc/classes/Requirements.php:68
 #, php-format
@@ -153,22 +165,22 @@ msgstr ""
 #, php-format
 msgid ""
 "This website uses API services, technology and goods from the WordPress Geo "
-"Plugin GPS extension and that part belongs to the <a href=\"%1$s\" target="
+"Plugin GPS extension and that part belongs to the <a href=\"%s\" target="
 "\"_blank\">WordPress Geo Plugin Privacy Policy</a>."
 msgstr ""
-"Ова веб локација користи АПИ услуге, технологију и робу из ВордПресс Гео "
+"Ова веб локација користи АПИ услуге, технологију и податке из Вордпресс Гео "
 "Плугин ГПС екстензије и тај део припада <a href=\"%1$s\" target=\"_blank"
-"\">Политика приватности ВордПресс Гео Плугина</a>."
+"\">Политици приватности Вордпресс Гео Плугина</a>."
 
 #: inc/classes/Requirements.php:188
 #, php-format
 msgid ""
 "Also, part of the services, technology and goods come from the Google "
-"Geocode API and that part belongs to the <a href=\"%2$s\" target=\"_blank"
+"Geocode API and that part belongs to the <a href=\"%s\" target=\"_blank"
 "\">Google Privacy Policy</a>"
 msgstr ""
-"Такође, део услуга, технологије и робе долази из Гоогле Геоцоде АПИ-ја и тај "
-"део припада <a href=\"%2$s\" target=\"_blank\">Гоогле политика приватности</"
+"Такође, део услуга, технологије и података долази из Гугл Геокод АПИ-ја и "
+"тај део припада <a href=\"%s\" target=\"_blank\">Гугл политици приватности</"
 "a>"
 
 #. Plugin Name of the plugin/theme

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WordPress Geo Plugin GPS extension\n"
-"POT-Creation-Date: 2022-01-11 13:20+0100\n"
-"PO-Revision-Date: 2022-01-11 13:20+0100\n"
+"POT-Creation-Date: 2022-02-17 08:23+0100\n"
+"PO-Revision-Date: 2022-02-17 08:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en_US\n"
@@ -21,55 +21,67 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
-#: inc/Init.php:127
+#: inc/Init.php:126
 msgid "There is no results for this search."
 msgstr ""
 
-#: inc/Init.php:128
+#: inc/Init.php:127
 msgid "Your daily limit is reached. Check your billing settings."
 msgstr ""
 
-#: inc/Init.php:129
+#: inc/Init.php:128
 msgid "Your account quota is reached."
 msgstr ""
 
-#: inc/Init.php:130
+#: inc/Init.php:129
 msgid "Your request is denied."
 msgstr ""
 
-#: inc/Init.php:131
+#: inc/Init.php:130
 msgid "Your send bad or broken request to you API call."
 msgstr ""
 
-#: inc/Init.php:132
+#: inc/Init.php:131
 msgid ""
 "Request could not be processed due to a server error. The request may "
 "succeed if you try again."
 msgstr ""
 
-#: inc/Init.php:133
+#: inc/Init.php:132
 msgid "User denied the request for Geolocation."
 msgstr ""
 
-#: inc/Init.php:134
+#: inc/Init.php:133
 msgid "Location information is unavailable."
 msgstr ""
 
-#: inc/Init.php:135
+#: inc/Init.php:134
 msgid "The request to get user location timed out."
 msgstr ""
 
-#: inc/Init.php:136
+#: inc/Init.php:135
 msgid "An unknown error occurred."
 msgstr ""
 
-#: inc/Init.php:137
+#: inc/Init.php:136
 msgid "Geolocation is not supported by this browser."
 msgstr ""
 
-#: inc/Init.php:138
+#: inc/Init.php:137
 #, php-format
 msgid "Google Geocode: %s"
+msgstr ""
+
+#: inc/classes/GPS.php:76
+msgid "GPS data missing."
+msgstr ""
+
+#: inc/classes/GPS.php:90
+msgid "Could not retrieve geo data."
+msgstr ""
+
+#: inc/classes/GPS.php:137
+msgid "No GPS data."
 msgstr ""
 
 #: inc/classes/Requirements.php:68
@@ -134,7 +146,7 @@ msgstr ""
 #, php-format
 msgid ""
 "This website uses API services, technology and goods from the WordPress Geo "
-"Plugin GPS extension and that part belongs to the <a href=\"%1$s\" target="
+"Plugin GPS extension and that part belongs to the <a href=\"%s\" target="
 "\"_blank\">WordPress Geo Plugin Privacy Policy</a>."
 msgstr ""
 
@@ -142,7 +154,7 @@ msgstr ""
 #, php-format
 msgid ""
 "Also, part of the services, technology and goods come from the Google "
-"Geocode API and that part belongs to the <a href=\"%2$s\" target=\"_blank"
+"Geocode API and that part belongs to the <a href=\"%s\" target=\"_blank"
 "\">Google Privacy Policy</a>"
 msgstr ""
 

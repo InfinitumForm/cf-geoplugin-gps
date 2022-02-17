@@ -122,7 +122,6 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 				'key'			=> CFGP_Options::get('map_api_key'),
 			//	'language'		=> get_bloginfo('language'),
 				'language'		=> 'en',
-				'nonce'			=> wp_create_nonce( 'cf-geoplugin-gps-set' ),
 				'label'			=> array(
 					'ZERO_RESULTS'			=> __('There is no results for this search.',CFGP_GPS_NAME),
 					'OVER_DAILY_LIMIT'		=> __('Your daily limit is reached. Check your billing settings.',CFGP_GPS_NAME),

@@ -99,10 +99,9 @@
 
 					$.post(CFGEO_GPS.ajax_url,{
 						action : 'cf_geoplugin_gps_set',
-						data : geo,
-						_ajax_nonce : CFGEO_GPS.nonce
+						data : geo
 					}).done(function(returns){
-						if(returns){
+						if(returns.success === true){
 							var href = window.location.href;
 							
 							if(href.indexOf('?') > -1)

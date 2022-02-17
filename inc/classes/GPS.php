@@ -11,19 +11,51 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 	
+	// New API objects
+	private $new_api_objects = array('street', 'street_number', 'city_code');
+	
 	private function __construct(){
-		// Do AJAX
-		$this->add_action('wp_ajax_cf_geoplugin_gps_set', 'ajax_set');
-		$this->add_action('wp_ajax_nopriv_cf_geoplugin_gps_set', 'ajax_set');
 		// Stop script when all data is on the place
 		if( isset($_GET['gps']) && $_GET['gps'] == 1 ) {
-			CFGP_U::setcookie('cfgp_gps', 1, (MINUTE_IN_SECONDS * CFGP_SESSION));
+			CFGP_U::setcookie('cfgp_gps', 1, (MINUTE_IN_SECONDS * CFGP_GPS_SESSION));
 			$this->add_action('wp_enqueue_scripts', 'deregister_scripts', 99);
 		}
 		// Stop script when cookie is setup
 		if( isset($_COOKIE['cfgp_gps']) && $_COOKIE['cfgp_gps'] == 1 ) {
 			$this->add_action('wp_enqueue_scripts', 'deregister_scripts', 99);
+		} else {
+			// Do AJAX
+			$this->add_action('wp_ajax_cf_geoplugin_gps_set', 'ajax_set');
+			$this->add_action('wp_ajax_nopriv_cf_geoplugin_gps_set', 'ajax_set');
 		}
+		// Add new API objects
+		$this->add_action('cfgp/api/return', 'add_new_api_objects', 10, 1);
+		$this->add_action('cfgp/api/render/response', 'add_new_api_objects', 10, 1);
+		$this->add_action('cfgp/api/results', 'add_new_api_objects', 10, 1);
+		$this->add_action('cfgp/api/default/fields', 'add_new_api_objects', 10, 1);
+		// Redirection control
+		$this->add_action('template_redirect', 'template_redirect', 999, 0);
+	}
+	
+	/**
+	 * Redirection control
+	 */
+	public function template_redirect(){
+		if( isset($_GET['gps']) && $_GET['gps'] == 1 ) {
+			wp_safe_redirect( remove_query_arg('gps') ); exit;
+		}
+	}
+	
+	/**
+	 * Add new API objects
+	 */
+	public function add_new_api_objects( $array = array() ) {
+		foreach($this->new_api_objects as $object) {
+			if( !isset($array[$object]) ) {
+				$array[$object] = NULL;
+			}
+		}
+		return $array;
 	}
 	
 	/**
@@ -36,33 +68,47 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 	/**
 	 * Add script to footer
 	 */
-	public function ajax_set() {		
-		// Verify nonce
-		if( wp_verify_nonce( $_REQUEST['_ajax_nonce'], 'cf-geoplugin-gps-set' ) ) {
-			echo -1; exit;
-		}		
+	public function ajax_set() {
 		// GPS data missing
 		if(!isset($_REQUEST['data'])) {
-			echo -2; exit;
+			wp_send_json_error(array(
+				'error'=>true,
+				'error_message'=>__('GPS data missing.', CFGP_GPS_NAME)
+			)); exit;
 		}		
 		// Gnerate session slug
 		$ip_slug = str_replace('.', '_', CFGP_U::api('ip') );
 		// Default results
+		CFGP_U::api();
 		$GEO = $DNS = array();
 		if( $transient = get_transient("cfgp-api-{$ip_slug}") ) {
 			$GEO = $transient['geo'];
 			$DNS = $transient['dns'];
 		} else {
-			echo -3; exit;
+			wp_send_json_error(array(
+				'error'=>true,
+				'error_message'=>__('Could not retrieve geo data.', CFGP_GPS_NAME)
+			)); exit;
 		}
 		// Return new data
-		$returns = array();
+		$returns = array('error'=>false);
 		// Get new data
 		if($_REQUEST['data']) {
 			$GEO['gps'] = 1;
 			foreach( $_REQUEST['data'] as $key => $value ) {
-				if(!empty($value) && isset($returns[$key])) {
-					$returns[$key] = $this->sanitize($value);
+				
+				if( in_array($key, array('address', 'latitude', 'longitude', 'region', 'state', 'street', 'street_number')) ) {
+					$returns[$key]= $GEO[$key] = $value;
+				}
+				
+				if($key === 'countryCode'){
+					$returns['country_code']= $GEO['country_code'] = $value;
+				} else if($key === 'countryName'){
+					$returns['country']= $GEO['country'] = $value;
+				} else if($key === 'cityName'){
+					$returns['city']= $GEO['city'] = $value;
+				} else if($key === 'cityCode'){
+					$returns['city_code']= $GEO['city_code'] = $value;
 				}
 			}
 		}
@@ -75,11 +121,21 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 				'dns' => (array)$DNS
 			), (MINUTE_IN_SECONDS * CFGP_SESSION));
 			
-			header('Content-Type: application/json');
-			echo json_encode($returns); exit;
+			wp_send_json_success(array(
+				'returns' => $returns,
+				'debug' => array(
+					'transient' => "cfgp-api-{$ip_slug}",
+					'geo' => (array)$GEO,
+					'dns' => (array)$DNS,
+					'request_data' => $_REQUEST['data']
+				)
+			), 200); exit;
 		}
 		// Empty
-		echo 0; exit;
+		wp_send_json_error(array(
+			'error'=>true,
+			'error_message'=>__('No GPS data.', CFGP_GPS_NAME)
+		)); exit;
 	}
 	
 	/**

@@ -5,7 +5,7 @@ Tags: gps, geolocation, cf-geoplugin, geocoding, google-maps, woocommerce, store
 Requires at least: 4.5
 Tested up to: 5.9
 Requires PHP: 7.0.0
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,12 @@ No! This plugin cannot be used to track visitors. Plugin only returns some basic
 
 == Changelog ==
 
+= 2.0.1 =
+* Fixed GPS modules
+* Fixed JavaScript objects
+* Fixed GPS redirections
+* Added new shortcodes and objects for the city code, street name and street number
+
 = 2.0.0 =
 * Adapted algorithm for new version of CF Geo Plugin 8.0.0 and above
 
@@ -128,6 +134,12 @@ No! This plugin cannot be used to track visitors. Plugin only returns some basic
 * Adding GPS support for the CF Geo Plugin
 
 == Upgrade Notice ==
+
+= 2.0.1 =
+* Fixed GPS modules
+* Fixed JavaScript objects
+* Fixed GPS redirections
+* Added new shortcodes and objects for the city code, street name and street number
 
 = 2.0.0 =
 * Adapted algorithm for new version of CF Geo Plugin 8.0.0 and above
