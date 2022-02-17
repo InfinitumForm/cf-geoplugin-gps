@@ -48,6 +48,14 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 			CFGP_CLASS . '/Utilities.php',				// Utilities
 			CFGP_CLASS . '/Global.php',					// Global class
 		));
+		
+		// Fix path on the Windows
+		if( '\\' === DIRECTORY_SEPARATOR ) {
+			$includes = array_map(function($path){
+				return str_replace('/', DIRECTORY_SEPARATOR, $path);
+			}, $includes);
+		}
+		
 		foreach($includes as $include){
 			if( file_exists($include) ) {
 				include_once $include;
@@ -63,7 +71,7 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 		$instance = self::instance();
 		// Push new PHP file to main plugin
 		add_filter('cfgp/init/include_classes', function($includes){
-			array_push($includes, CFGP_GPS_CLASS . '/GPS.php');
+			array_push($includes, CFGP_GPS_CLASS . DIRECTORY_SEPARATOR . 'GPS.php');
 			return $includes;
 		});
 		// Push new Class to main plugin
@@ -94,7 +102,7 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 		}
 		// Or inside `/wp-content/plugin/cf-geoplugin/languages`
 		if ( ! $loaded ) {
-			$domain_path = CFGP_ROOT . '/languages';
+			$domain_path = CFGP_ROOT . DIRECTORY_SEPARATOR . 'languages';
 			$loaded = load_textdomain( CFGP_GPS_NAME, path_join( $domain_path, $mofile ) );
 			// Or load with only locale without prefix
 			if ( ! $loaded ) {
@@ -153,10 +161,6 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 			global $wpdb;
 			// clear old cache
 			CFGP_U::flush_plugin_cache();
-			// Include important library
-			if(!function_exists('dbDelta')){
-				require_once ABSPATH . '/wp-admin/includes/upgrade.php';
-			}
 			// Add activation date
 			if($activation = get_option(CFGP_GPS_NAME . '-activation')) {
 				$activation[] = date('Y-m-d H:i:s');

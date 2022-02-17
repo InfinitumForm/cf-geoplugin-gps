@@ -8,7 +8,7 @@
  * Plugin Name:       WordPress Geo Plugin GPS extension
  * Plugin URI:        http://cfgeoplugin.com/
  * Description:       WordPress GPS module for the CF Geo Plugin.
- * Version:           2.0.1
+ * Version:           2.0.2
  * Author:            INFINITUM FORM
  * Author URI:        https://infinitumform.com/
  * License:           GPL-2.0+
@@ -45,12 +45,12 @@ if ( ! defined( 'CFGP_GPS_FILE' ) ) define( 'CFGP_GPS_FILE', __FILE__ );
 /*
  * Require plugin general setup
  */
-include_once __DIR__ . '/constants.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . 'constants.php';
 
 /*
  * Requirements
  */
-include_once CFGP_GPS_CLASS . '/Requirements.php';
+include_once CFGP_GPS_CLASS . DIRECTORY_SEPARATOR . 'Requirements.php';
 
 /*
  * Check requiremant
@@ -58,7 +58,7 @@ include_once CFGP_GPS_CLASS . '/Requirements.php';
 $CFGP_GPS_Requirements = new CFGP_GPS_Requirements(array('file' => CFGP_GPS_FILE));
 if($CFGP_GPS_Requirements->passes()) :
 	// Initializing class
-	include_once CFGP_GPS_INC . '/Init.php';
+	include_once CFGP_GPS_INC . DIRECTORY_SEPARATOR . 'Init.php';
 	// Include dependencies
 	CFGP_GPS_Init::dependencies();
 	// Plugin activation

@@ -35,6 +35,17 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 		$this->add_action('cfgp/api/default/fields', 'add_new_api_objects', 10, 1);
 		// Redirection control
 		$this->add_action('template_redirect', 'template_redirect', 999, 0);
+		// Clear some cache on the plugin save
+		$this->add_action('cfgp/options/action/set', 'clear_cache_on_options_save', 10, 5);
+	}
+	
+	/**
+	 * Clear some cache on the plugin save
+	 */
+	public function clear_cache_on_options_save($options, $default_options, $name_or_array, $value, $clear_cache) {
+		if($clear_cache) {
+			CFGP_U::setcookie('cfgp_gps', 0, ((YEAR_IN_SECONDS*2)-CFGP_TIME));
+		}
 	}
 	
 	/**

@@ -13,21 +13,21 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 if ( strrpos(WP_CONTENT_DIR, '/wp-content/', 1) !== false) {
     $WP_ADMIN_DIR = substr(WP_CONTENT_DIR, 0, -10) . 'wp-admin';
 } else {
-    $WP_ADMIN_DIR = substr(WP_CONTENT_DIR, 0, -11) . '/wp-admin';
+    $WP_ADMIN_DIR = substr(WP_CONTENT_DIR, 0, -11) . DIRECTORY_SEPARATOR . 'wp-admin';
 }
 if (!defined('WP_ADMIN_DIR')) define('WP_ADMIN_DIR', $WP_ADMIN_DIR);
 
-if(file_exists(WP_PLUGIN_DIR . '/cf-geoplugin'))
+if(file_exists(WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'cf-geoplugin'))
 {
 	// Main Plugin root
-	if ( ! defined( 'CFGP_ROOT' ) )			define( 'CFGP_ROOT', WP_PLUGIN_DIR . '/cf-geoplugin' );
+	if ( ! defined( 'CFGP_ROOT' ) )		define( 'CFGP_ROOT', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'cf-geoplugin' );
 	// Main plugin file
-	if ( ! defined( 'CFGP_FILE' ) )			define( 'CFGP_FILE', CFGP_ROOT . '/cf-geoplugin.php' );
+	if ( ! defined( 'CFGP_FILE' ) )		define( 'CFGP_FILE', CFGP_ROOT . DIRECTORY_SEPARATOR . 'cf-geoplugin.php' );
 } else {
 	// Main Plugin root
-	if ( ! defined( 'CFGP_ROOT' ) )		define( 'CFGP_ROOT', WP_CONTENT_DIR . '/plugins/cf-geoplugin' );
+	if ( ! defined( 'CFGP_ROOT' ) )		define( 'CFGP_ROOT', WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'cf-geoplugin' );
 	// Main plugin file
-	if ( ! defined( 'CFGP_FILE' ) )		define( 'CFGP_FILE', CFGP_ROOT . '/cf-geoplugin.php' );
+	if ( ! defined( 'CFGP_FILE' ) )		define( 'CFGP_FILE', CFGP_ROOT . DIRECTORY_SEPARATOR . 'cf-geoplugin.php' );
 }
 // Current plugin version ( if change, clear also session cache )
 $cfgp_version = NULL;
@@ -44,10 +44,10 @@ if ( ! defined( 'CFGP_VERSION' ) )		define( 'CFGP_VERSION', $cfgp_version);
 if ( ! defined( 'CFGP_STORE' ) )		define( 'CFGP_STORE', 'https://cfgeoplugin.com');
 
 // Includes directory
-if ( ! defined( 'CFGP_INC' ) )			define( 'CFGP_INC', CFGP_ROOT . '/inc' );
+if ( ! defined( 'CFGP_INC' ) )			define( 'CFGP_INC', CFGP_ROOT . DIRECTORY_SEPARATOR . 'inc' );
 
 // Classes directory
-if ( ! defined( 'CFGP_CLASS' ) )		define( 'CFGP_CLASS', CFGP_INC . '/classes' );
+if ( ! defined( 'CFGP_CLASS' ) )		define( 'CFGP_CLASS', CFGP_INC . DIRECTORY_SEPARATOR . 'classes' );
 
 // Timestamp
 if( ! defined( 'CFGP_TIME' ) )			define( 'CFGP_TIME', time() );
@@ -62,16 +62,16 @@ if ( ! defined( 'CFGP_PREFIX' ) )		define( 'CFGP_PREFIX', 'cf_geo_'.preg_replace
 if ( ! defined( 'CFGP_GPS_FILE' ) )		define( 'CFGP_GPS_FILE', __FILE__ );
 
 // Plugin root
-if ( ! defined( 'CFGP_GPS_ROOT' ) )		define( 'CFGP_GPS_ROOT', rtrim(plugin_dir_path(CFGP_GPS_FILE), '/') );
+if ( ! defined( 'CFGP_GPS_ROOT' ) )		define( 'CFGP_GPS_ROOT', rtrim(plugin_dir_path(CFGP_GPS_FILE), '/\\') );
 
 // Plugin Inc root
-if ( ! defined( 'CFGP_GPS_INC' ) )		define( 'CFGP_GPS_INC', CFGP_GPS_ROOT . '/inc' );
+if ( ! defined( 'CFGP_GPS_INC' ) )		define( 'CFGP_GPS_INC', CFGP_GPS_ROOT . DIRECTORY_SEPARATOR . 'inc' );
 
 // Plugin Classes root
-if ( ! defined( 'CFGP_GPS_CLASS' ) )	define( 'CFGP_GPS_CLASS', CFGP_GPS_INC . '/classes' );
+if ( ! defined( 'CFGP_GPS_CLASS' ) )	define( 'CFGP_GPS_CLASS', CFGP_GPS_INC . DIRECTORY_SEPARATOR . 'classes' );
 
 // Plugin URL root
-if ( ! defined( 'CFGP_GPS_URL' ) )		define( 'CFGP_GPS_URL', rtrim(plugin_dir_url( CFGP_GPS_FILE ), '/') );
+if ( ! defined( 'CFGP_GPS_URL' ) )		define( 'CFGP_GPS_URL', rtrim(plugin_dir_url( CFGP_GPS_FILE ), '/\\') );
 
 // Plugin URL root
 if ( ! defined( 'CFGP_GPS_JS' ) )		define( 'CFGP_GPS_JS', CFGP_GPS_URL . '/js' );
@@ -102,10 +102,10 @@ if( ! defined( 'CFGP_GPS_MULTISITE' ) )
 {
     // New safer approach
     if( !function_exists( 'is_plugin_active_for_network' ) )
-		include WP_ADMIN_DIR . '/includes/plugin.php';
+		include WP_ADMIN_DIR . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'plugin.php';
 
-	if(file_exists(WP_ADMIN_DIR . '/includes/plugin.php'))
-		define( 'CFGP_GPS_MULTISITE', is_plugin_active_for_network( CFGP_GPS_ROOT . '/cf-geoplugin-gps.php' ) );
+	if(file_exists(WP_ADMIN_DIR . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'plugin.php'))
+		define( 'CFGP_GPS_MULTISITE', is_plugin_active_for_network( CFGP_GPS_ROOT . DIRECTORY_SEPARATOR . 'cf-geoplugin-gps.php' ) );
 }
 
 if( ! defined( 'CFGP_GPS_MULTISITE' ) ) define( 'CFGP_GPS_MULTISITE', false );
