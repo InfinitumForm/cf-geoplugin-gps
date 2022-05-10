@@ -25,7 +25,7 @@ if(!class_exists('CFGP_GPS_Requirements')) : class CFGP_GPS_Requirements {
 	
 	// Main plugin details
 	private $cfgp_title = 'CF Geo Plugin';
-	private $cfgp_version = '8.0.0';
+	private $cfgp_version = '8.2.5';
 	private $cfgp_slug = 'cf-geoplugin';
 	
 	// Main filename

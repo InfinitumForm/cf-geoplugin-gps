@@ -44,6 +44,7 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 		// Include file classes
 		$includes = apply_filters('cfgp_gps/init/include_classes', array(
 			CFGP_CLASS . '/Cache.php',					// Memory control class
+			CFGP_CLASS . '/Cache_DB.php',				// DB memory control class
 			CFGP_CLASS . '/Defaults.php',				// Default values, data
 			CFGP_CLASS . '/Utilities.php',				// Utilities
 			CFGP_CLASS . '/Global.php',					// Global class

@@ -92,7 +92,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 		// Default results
 		CFGP_U::api();
 		$GEO = $DNS = array();
-		if( $transient = get_transient("cfgp-api-{$ip_slug}") ) {
+		if( $transient = CFGP_DB_Cache::get("cfgp-api-{$ip_slug}") ) {
 			$GEO = $transient['geo'];
 			$DNS = $transient['dns'];
 		} else {
@@ -127,7 +127,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 		if( !empty($returns) ) {
 			$GEO = array_merge($GEO, $returns);
 			
-			set_transient("cfgp-api-{$ip_slug}", array(
+			CFGP_DB_Cache::set("cfgp-api-{$ip_slug}", array(
 				'geo' => (array)$GEO,
 				'dns' => (array)$DNS
 			), (MINUTE_IN_SECONDS * CFGP_SESSION));
