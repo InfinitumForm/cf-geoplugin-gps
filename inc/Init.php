@@ -47,7 +47,11 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 			CFGP_CLASS . '/Cache_DB.php',				// DB memory control class
 			CFGP_CLASS . '/Defaults.php',				// Default values, data
 			CFGP_CLASS . '/Utilities.php',				// Utilities
+			CFGP_CLASS . '/Options.php',				// Plugin option class
 			CFGP_CLASS . '/Global.php',					// Global class
+			CFGP_CLASS . '/IP.php',						// IP class
+			CFGP_CLASS . '/License.php',				// License class
+			CFGP_CLASS . '/API.php',					// API class
 		));
 		
 		// Fix path on the Windows
