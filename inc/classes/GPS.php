@@ -88,7 +88,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 			)); exit;
 		}		
 		// Gnerate session slug
-		$ip_slug = self::cache_key( CFGP_U::api('ip') );
+		$ip_slug = CFGP_API::cache_key( CFGP_U::api('ip') );
 		// Default results
 		CFGP_U::api();
 		$GEO = array();
