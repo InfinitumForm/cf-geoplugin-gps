@@ -88,13 +88,12 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 			)); exit;
 		}		
 		// Gnerate session slug
-		$ip_slug = str_replace('.', '_', CFGP_U::api('ip') );
+		$ip_slug = self::cache_key( CFGP_U::api('ip') );
 		// Default results
 		CFGP_U::api();
-		$GEO = $DNS = array();
+		$GEO = array();
 		if( $transient = CFGP_DB_Cache::get("cfgp-api-{$ip_slug}") ) {
-			$GEO = $transient['geo'];
-			$DNS = $transient['dns'];
+			$GEO = $transient;
 		} else {
 			wp_send_json_error(array(
 				'error'=>true,
@@ -127,20 +126,23 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 		if( !empty($returns) ) {
 			$GEO = array_merge($GEO, $returns);
 			
-			CFGP_DB_Cache::set("cfgp-api-{$ip_slug}", array(
-				'geo' => (array)$GEO,
-				'dns' => (array)$DNS
-			), (MINUTE_IN_SECONDS * CFGP_SESSION));
+			CFGP_DB_Cache::set("cfgp-api-{$ip_slug}", $GEO, (MINUTE_IN_SECONDS * CFGP_SESSION));
 			
-			wp_send_json_success(array(
-				'returns' => $returns,
-				'debug' => array(
-					'transient' => "cfgp-api-{$ip_slug}",
-					'geo' => (array)$GEO,
-					'dns' => (array)$DNS,
-					'request_data' => $_REQUEST['data']
-				)
-			), 200); exit;
+			if( CFGP_U::dev_mode() ) {
+				wp_send_json_success(array(
+					'returns' => $returns,
+					'debug' => array(
+						'transient' => "cfgp-api-{$ip_slug}",
+						'geo' => (array)$GEO,
+						'request_data' => ( $_REQUEST['data'] ?? NULL )
+					)
+				), 200);
+			} else {
+				wp_send_json_success(array(
+					'returns' => $returns
+				), 200);
+			}
+			exit;
 		}
 		// Empty
 		wp_send_json_error(array(

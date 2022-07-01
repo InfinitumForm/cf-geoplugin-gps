@@ -3,9 +3,9 @@ Contributors: ivijanstefan, creativform
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=creativform@gmail.com
 Tags: gps, geolocation, cf-geoplugin, geocoding, google-maps, woocommerce, store-locator, seo, geomarketing, geo plugin, geotargeting, geofencing
 Requires at least: 4.5
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 7.0.0
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,6 +70,11 @@ It is very complicated to get GPS information and this data is sensitive. We mus
 No! This plugin cannot be used to track visitors. Plugin only returns some basic geo information and saves to session on the 5 minutes. 
 
 == Changelog ==
+
+= 2.0.4 =
+* Added support for WOrdPress version 6.0
+* Fixed bugs from previous version
+* Optimized PHP code
 
 = 2.0.3 =
 * Added support for CF Geo Plugin version 8.2.5
@@ -146,21 +151,10 @@ No! This plugin cannot be used to track visitors. Plugin only returns some basic
 
 == Upgrade Notice ==
 
-= 2.0.2 =
-* Fixed GPS cache
-* Fixed objects
-* Improved file includes
-* Optimized codes
-* Improved security
-
-= 2.0.1 =
-* Fixed GPS modules
-* Fixed JavaScript objects
-* Fixed GPS redirections
-* Added new shortcodes and objects for the city code, street name and street number
-
-= 2.0.0 =
-* Adapted algorithm for new version of CF Geo Plugin 8.0.0 and above
+= 2.0.4 =
+* Added support for WOrdPress version 6.0
+* Fixed bugs from previous version
+* Optimized PHP code
 
 == Other Notes ==
 
