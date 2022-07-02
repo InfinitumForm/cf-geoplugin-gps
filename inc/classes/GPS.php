@@ -37,6 +37,11 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 		$this->add_action('template_redirect', 'template_redirect', 999, 0);
 		// Clear some cache on the plugin save
 		$this->add_action('cfgp/options/action/set', 'clear_cache_on_options_save', 10, 5);
+		// Add debug tab to debug page
+		if( defined('CFGP_GPS_DEBUG') && CFGP_GPS_DEBUG ) {
+			$this->add_action('cfgp/debug/nav-tab/after', 'debug_page_nav_tab');
+			$this->add_action('cfgp/debug/tab-panel/after', 'debug_page_tab_panel');
+		}
 	}
 	
 	/**
@@ -105,9 +110,9 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 		// Get new data
 		if($_REQUEST['data']) {
 			$GEO['gps'] = 1;
-			foreach( $_REQUEST['data'] as $key => $value ) {
+			foreach( CFGP_Options::sanitize($_REQUEST['data']) as $key => $value ) {
 				
-				if( in_array($key, array('address', 'latitude', 'longitude', 'region', 'state', 'street', 'street_number')) ) {
+				if( in_array($key, array('address', 'latitude', 'longitude', 'region', 'state', 'street', 'street_number', 'district')) ) {
 					$returns[$key]= $GEO[$key] = $value;
 				}
 				
@@ -119,8 +124,21 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 					$returns['city']= $GEO['city'] = $value;
 				} else if($key === 'cityCode'){
 					$returns['city_code']= $GEO['city_code'] = $value;
+				} else if($key === 'district'){
+					$returns['district']= $GEO['district'] = $value;
 				}
 			}
+		}
+		// Debug
+		if( defined('CFGP_GPS_DEBUG') && CFGP_GPS_DEBUG ) {
+			$debug = get_option(CFGP_GPS_NAME . '-debug', array());
+			if( empty($debug) ) {
+				$debug = array();
+			}
+			$debug[]= CFGP_Options::sanitize($_REQUEST['data']);
+			update_option(CFGP_GPS_NAME . '-debug', $debug, false);
+		} else if(get_option(CFGP_GPS_NAME . '-debug')) {
+			delete_option(CFGP_GPS_NAME . '-debug');
 		}
 		// Set new data
 		if( !empty($returns) ) {
@@ -152,47 +170,20 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 	}
 	
 	/**
-	 * Sanitize string or array (FUTURE REMOVED)
-	 *
-	 * This functionality do automatization for the certain type of data expected in this plugin
+	 * Debug navigaton tab
 	 */
-	private function sanitize( $str ){
-		if( is_array($str) )
-		{
-			$data = array();
-			foreach($str as $key => $obj)
-			{
-				$data[$key]=$this->sanitize( $obj ); 
-			}
-			return $data;
-		}
-		else
-		{
-			$str = trim( $str );
-			
-			if(empty($str) && $str != 0)
-				return NULL;
-			else if(is_numeric($str))
-			{
-				if(intval( $str ) == $str)
-					$str = intval( $str );
-				else if(floatval($str) == $str)
-					$str = floatval( $str );
-				else
-					$str = sanitize_text_field( $str );
-			}
-			else if(!is_bool($str) && in_array(strtolower($str), array('true','false'), true))
-			{
-				$str = ( strtolower($str) == 'true' );
-			}
-			else
-			{
-				$str = sanitize_text_field( $str );
-			}
-			
-			return $str;
-		}
-	}
+	public function debug_page_nav_tab() { ?>
+		<a href="javascript:void(0);" class="nav-tab" data-id="#gps-debug"><i class="cfa cfa-map-marker"></i><span class="label"> <?php _e('GPS', CFGP_NAME); ?></span></a>
+	<?php }
+	
+	/**
+	 * Debug tab container
+	 */
+	public function debug_page_tab_panel() { ?>
+		<div class="cfgp-tab-panel cfgp-tab-panel-active" id="gps-debug">
+			<?php CFGP_U::dump( get_option(CFGP_GPS_NAME . '-debug') ); ?>
+		</div>
+	<?php }
 	
 	/* 
 	 * Instance

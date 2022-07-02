@@ -25,3 +25,7 @@ if(get_option(CFGP_GPS_NAME. '-activation')) {
 if(get_option(CFGP_GPS_NAME . '-deactivation')) {
 	delete_option(CFGP_GPS_NAME . '-deactivation');
 }
+
+if(get_option(CFGP_GPS_NAME . '-debug')) {
+	delete_option(CFGP_GPS_NAME . '-debug');
+}

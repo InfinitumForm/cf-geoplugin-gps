@@ -91,9 +91,6 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 	 * @since     2.0.0
 	 */
 	public function textdomain() {
-		if ( is_textdomain_loaded( CFGP_GPS_NAME ) ) {
-			unload_textdomain( CFGP_GPS_NAME );
-		}
 		// Get locale
 		$locale = apply_filters( 'cfgp_plugin_locale', get_locale(), CFGP_GPS_NAME );
 		// We need standard file
@@ -189,6 +186,11 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 			if ( ! current_user_can( 'activate_plugins' ) ) {
 				return;
 			}
+			
+			if ( is_textdomain_loaded( CFGP_GPS_NAME ) ) {
+				unload_textdomain( CFGP_GPS_NAME );
+			}
+		
 			// Add deactivation date
 			if($deactivation = get_option(CFGP_GPS_NAME . '-deactivation')) {
 				$deactivation[] = date('Y-m-d H:i:s');

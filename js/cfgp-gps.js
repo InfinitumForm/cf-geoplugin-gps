@@ -3,7 +3,7 @@
  *
  * @link              http://cfgeoplugin.com/
  * @since             1.0.0
- * @version           1.0.1
+ * @version           1.0.3
  * @package           CF_Geoplugin_GPS
  * @author            INFINITUM FORM
  * @license           GPL-2.0+
@@ -61,6 +61,10 @@
 						geo.region = geo.administrative_area_level_1.long_name;
 						geo.state = geo.administrative_area_level_1.long_name;
 						geo.regionName = geo.administrative_area_level_1.long_name;
+					}
+					
+					if(geo.administrative_area_level_2){
+						geo.district = geo.administrative_area_level_2.long_name;
 					}
 					
 					if(geo.political){
@@ -170,16 +174,16 @@
 			switch(error.code)
 			{
 				case error.PERMISSION_DENIED:
-					returns = CFGEO_GPS.label.PERMISSION_DENIED
+					returns = CFGEO_GPS.label.PERMISSION_DENIED;
 					break;
 				case error.POSITION_UNAVAILABLE:
-					returns = CFGEO_GPS.label.POSITION_UNAVAILABLE
+					returns = CFGEO_GPS.label.POSITION_UNAVAILABLE;
 					break;
 				case error.TIMEOUT:
-					returns = CFGEO_GPS.label.TIMEOUT
+					returns = CFGEO_GPS.label.TIMEOUT;
 					break;
 				case error.UNKNOWN_ERROR:
-					returns = CFGEO_GPS.label.UNKNOWN_ERROR
+					returns = CFGEO_GPS.label.UNKNOWN_ERROR;
 					break;
 			}
 			
