@@ -5,7 +5,7 @@ Tags: gps, geolocation, cf-geoplugin, geocoding, google-maps, woocommerce, store
 Requires at least: 4.5
 Tested up to: 6.0
 Requires PHP: 7.0.0
-Stable tag: 2.0.4
+Stable tag: 2.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,6 +70,9 @@ It is very complicated to get GPS information and this data is sensitive. We mus
 No! This plugin cannot be used to track visitors. Plugin only returns some basic geo information and saves to session on the 5 minutes. 
 
 == Changelog ==
+
+= 2.0.5 =
+* Added support for CF Geo Plugin version 8.3.0
 
 = 2.0.4 =
 * Added support for WOrdPress version 6.0
@@ -151,10 +154,8 @@ No! This plugin cannot be used to track visitors. Plugin only returns some basic
 
 == Upgrade Notice ==
 
-= 2.0.4 =
-* Added support for WOrdPress version 6.0
-* Fixed bugs from previous version
-* Optimized PHP code
+= 2.0.5 =
+* Added support for CF Geo Plugin version 8.3.0
 
 == Other Notes ==
 
