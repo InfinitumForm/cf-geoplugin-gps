@@ -8,7 +8,7 @@
  * Plugin Name:       Geo Controller GPS extension
  * Plugin URI:        http://cfgeoplugin.com/
  * Description:       WordPress GPS module for the Geo Controller Plugin.
- * Version:           2.0.5
+ * Version:           2.0.6
  * Author:            INFINITUM FORM
  * Author URI:        https://infinitumform.com/
  * License:           GPL-2.0+

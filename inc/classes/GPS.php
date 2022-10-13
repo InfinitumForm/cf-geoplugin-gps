@@ -56,6 +56,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 	 */
 	public function register_new_settings ($settings=[]) {
 		$settings['enable_gps_preloader'] = 0;
+		$settings['gps_preloader_image_src'] = '';
 		return $settings;
 	}
 	
@@ -295,17 +296,26 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 				height:100vh;
 				margin:0;
 				padding:0;
-				background-color:#fff;
+				background-color:#fbfbfb;
 				z-index:9000;
+				opacity:0.9;
 			}
 			#cf-geoplugin-gps-preloader.hidden{
 				display:none !important;
 			}
 			#cf-geoplugin-gps-preloader > #cf-geoplugin-gps-preloader-image-container {
-				position:relative;
+				position:absolute;
 				margin: 0 auto;
 				padding: 15px;
 				max-width:800px;
+				top:50%;
+				left:50%;
+				transform: translate(-50%, -50%);
+				-webkit-transform: translate(-50%, -50%);
+				-moz-transform: translate(-50%, -50%);
+				-ms-transform: translate(-50%, -50%);
+				-o-transform: translate(-50%, -50%);
+				z-index:1;
 			}
 			#cf-geoplugin-gps-preloader > #cf-geoplugin-gps-preloader-image-container > #cf-geoplugin-gps-preloader-image {
 				width: auto;

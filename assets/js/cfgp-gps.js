@@ -25,12 +25,35 @@
 
 ;(function($){
 	var info = [],
+		getCookie = function getCookie(cname) {
+			let name = cname + "=",
+				decodedCookie = decodeURIComponent(document.cookie),
+				ca = decodedCookie.split(';');
+				
+			for(let i = 0; i <ca.length; i++) {
+				let c = ca[i];
+				while (c.charAt(0) == ' ') {
+					c = c.substring(1);
+				}
+				if (c.indexOf(name) == 0) {
+					return c.substring(name.length, c.length);
+				}
+			}
+			
+			return null;
+		},
 		gps_preloader = $('#cf-geoplugin-gps-preloader'),
 		// Send GPS position
 		send_position = function( position ){
 			var latitude = position.coords.latitude,
 				longitude = position.coords.longitude;
-
+			
+			if(gps_preloader.length > 0 && getCookie('cfgp_gps') != 1) {
+				gps_preloader.removeClass('hidden');
+			} else if(gps_preloader.length > 0 && getCookie('cfgp_gps') == 1) {
+				gps_preloader.remove();
+			}
+			
 			$.get('https://maps.googleapis.com/maps/api/geocode/json',{
 				key : CFGEO_GPS.key,
 				language : CFGEO_GPS.language,
@@ -38,10 +61,6 @@
 			}).done(function(data){
 				if(data.status == 'OK')
 				{
-					if(gps_preloader) {
-						gps_preloader.removeClass('hidden');
-					}
-					
 					var geo = {}, i, key;
 					for(i in data.results[0].address_components)
 					{
@@ -172,11 +191,15 @@
 						} else {
 							console.info(CFGEO_GPS.label.google_geocode.replace(/%s/g, returns));
 						}
+
+						if(gps_preloader.length > 0 && getCookie('cfgp_gps') != 1) {
+							gps_preloader.addClass('hidden');
+						}
 					}
-					
-					if(gps_preloader) {
-						gps_preloader.addClass('hidden');
-					}
+				}
+			}).fail(function(){
+				if(gps_preloader.length > 0 && getCookie('cfgp_gps') != 1) {
+					gps_preloader.addClass('hidden');
 				}
 			});
 		},
@@ -200,7 +223,7 @@
 			
 			if(returns) {
 				console.error(CFGEO_GPS.label.google_geocode.replace(/%s/g, returns));
-				if(gps_preloader) {
+				if(gps_preloader.length > 0 && getCookie('cfgp_gps') != 1) {
 					gps_preloader.addClass('hidden');
 				}
 			}
@@ -214,7 +237,7 @@
 			{
 				console.log(CFGEO_GPS.label.google_geocode);
 				
-				if(gps_preloader) {
+				if(gps_preloader.length > 0 && getCookie('cfgp_gps') != 1) {
 					gps_preloader.addClass('hidden');
 				}
 			}
