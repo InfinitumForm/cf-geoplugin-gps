@@ -87,8 +87,11 @@ if ( ! defined( 'CFGP_GPS_CLASS' ) )	define( 'CFGP_GPS_CLASS', CFGP_GPS_INC . DI
 // Plugin URL root
 if ( ! defined( 'CFGP_GPS_URL' ) )		define( 'CFGP_GPS_URL', rtrim(plugin_dir_url( CFGP_GPS_FILE ), '/\\') );
 
+// Plugin URL assets
+if ( ! defined( 'CFGP_GPS_ASSETS' ) )	define( 'CFGP_GPS_ASSETS', CFGP_GPS_URL . '/assets' );
+
 // Plugin URL root
-if ( ! defined( 'CFGP_GPS_JS' ) )		define( 'CFGP_GPS_JS', CFGP_GPS_URL . '/js' );
+if ( ! defined( 'CFGP_GPS_JS' ) )		define( 'CFGP_GPS_JS', CFGP_GPS_ASSETS . '/js' );
 
 // Timestamp
 if( ! defined( 'CFGP_GPS_TIME' ) )		define( 'CFGP_GPS_TIME', CFGP_TIME );

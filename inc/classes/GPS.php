@@ -15,6 +15,9 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 	private $new_api_objects = array('street', 'street_number', 'city_code');
 	
 	private function __construct(){
+		// Add extra GPS options
+		$this->add_filter('cfgp/settings', 'settings', 2, 1);
+		$this->add_filter('cfgp/settings/default', 'register_new_settings', 2, 1);
 		// Stop script when all data is on the place
 		if( isset($_GET['gps']) && $_GET['gps'] == 1 ) {
 			CFGP_U::setcookie('cfgp_gps', 1, (MINUTE_IN_SECONDS * CFGP_GPS_SESSION));
@@ -27,6 +30,10 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 			// Do AJAX
 			$this->add_action('wp_ajax_cf_geoplugin_gps_set', 'ajax_set');
 			$this->add_action('wp_ajax_nopriv_cf_geoplugin_gps_set', 'ajax_set');
+			// Add preloader to pages
+			if( CFGP_Options::get('enable_gps_preloader') ) {
+				$this->add_action('wp_footer', 'append_preloader', -1, 0);
+			}
 		}
 		// Add new API objects
 		$this->add_action('cfgp/api/return', 'add_new_api_objects', 10, 1);
@@ -42,6 +49,79 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 			$this->add_action('cfgp/debug/nav-tab/after', 'debug_page_nav_tab');
 			$this->add_action('cfgp/debug/tab-panel/after', 'debug_page_tab_panel');
 		}
+	}
+	
+	/**
+	 * Add extra GPS options
+	 */
+	public function register_new_settings ($settings=[]) {
+		$settings['enable_gps_preloader'] = 0;
+		return $settings;
+	}
+	
+	/**
+	 * Add extra GPS options
+	 */
+	public function settings ($options=[]) {
+		// Add GPS extension settings
+		$options[0]['sections'] = CFGP_U::array_insert_after_key($options[0]['sections'], 1, array(
+			array(
+				'id' => 'gps-settings',
+				'title' => __('GPS Extension Settings', 'cf-geoplugin-gps'),
+				'desc' => __('Set your GPS extension to work the way you want it to.', 'cf-geoplugin-gps'),
+				'inputs' => array(
+					// Replace Google Map API key
+					array(
+						'name' => 'map_api_key',
+						'label' => __('Google Map API Key', 'cf-geoplugin'),
+						'type' => 'text',
+						'desc' => __('Enter the Google Map API key with Geocode API support activated.', 'cf-geoplugin-gps'),
+						'default' => '',
+						'attr' => array(
+							'autocomplete'=>'off',
+						)
+					),
+					// Enable preloader
+					array(
+						'name' => 'enable_gps_preloader',
+						'label' => __('Enable GPS preloader', 'cf-geoplugin-gps'),
+						'desc' => __('This option displays the preloader before the GPS displays the information. After that, the preloader is not displayed.', 'cf-geoplugin-gps'),
+						'type' => 'radio',
+						'options' => array(
+							1 => __('Enable', 'cf-geoplugin-gps'),
+							0 => __('Disable', 'cf-geoplugin-gps')
+						),
+						'default' => 0
+					),
+					// Replace preloader icon
+					array(
+						'name' => 'gps_preloader_image_src',
+						'label' => __('Preloader image URL', 'cf-geoplugin-gps'),
+						'type' => 'url',
+						'desc' => __('If you have your own preloader icon and want to display it, you need to enter its URL here.', 'cf-geoplugin-gps'),
+						'default' => '',
+						'attr' => array(
+							'autocomplete' => 'off',
+							'placeholder' => 'https://'
+						)
+					)
+				)
+			)
+		));
+		
+		// Replace default google map API key input field
+		$options[1]['sections'][0]['inputs'][0] = array(
+			'name' => 'google_map_api_key_info',
+			'label' => __('Google Map API Key', 'cf-geoplugin'),
+			'type' => 'info',
+			'info' => sprintf(
+				__('Google maps require an API key that you must add in the %1$s of this plugin under the %2$s.', 'cf-geoplugin-gps'),
+				'<b>'.__('General Settings', 'cf-geoplugin').'</b>',
+				'<b><a href="'.esc_url(admin_url('/admin.php?page=cf-geoplugin-settings')).'#gps-extension-settings">'.__('GPS Extension Settings', 'cf-geoplugin-gps').'</a></b>'
+			)
+		);
+		
+		return $options;
 	}
 	
 	/**
@@ -89,7 +169,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 		if(!isset($_REQUEST['data'])) {
 			wp_send_json_error(array(
 				'error'=>true,
-				'error_message'=>__('GPS data missing.', CFGP_GPS_NAME)
+				'error_message'=>__('GPS data missing.', 'cf-geoplugin-gps')
 			)); exit;
 		}		
 		// Gnerate session slug
@@ -102,7 +182,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 		} else {
 			wp_send_json_error(array(
 				'error'=>true,
-				'error_message'=>__('Could not retrieve geo data.', CFGP_GPS_NAME)
+				'error_message'=>__('Could not retrieve geo data.', 'cf-geoplugin-gps')
 			)); exit;
 		}
 		// Return new data
@@ -165,7 +245,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 		// Empty
 		wp_send_json_error(array(
 			'error'=>true,
-			'error_message'=>__('No GPS data.', CFGP_GPS_NAME)
+			'error_message'=>__('No GPS data.', 'cf-geoplugin-gps')
 		)); exit;
 	}
 	
@@ -173,7 +253,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 	 * Debug navigaton tab
 	 */
 	public function debug_page_nav_tab() { ?>
-		<a href="javascript:void(0);" class="nav-tab" data-id="#gps-debug"><i class="cfa cfa-map-marker"></i><span class="label"> <?php _e('GPS', CFGP_NAME); ?></span></a>
+		<a href="javascript:void(0);" class="nav-tab" data-id="#gps-debug"><i class="cfa cfa-map-marker"></i><span class="label"> <?php _e('GPS', 'cf-geoplugin'); ?></span></a>
 	<?php }
 	
 	/**
@@ -184,6 +264,57 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 			<?php CFGP_U::dump( get_option(CFGP_GPS_NAME . '-debug') ); ?>
 		</div>
 	<?php }
+	
+	/**
+	 * Append preloader to pages
+	 */
+	public function append_preloader() { ?>
+		<div id="cf-geoplugin-gps-preloader" class="hidden">
+			<div id="cf-geoplugin-gps-preloader-image-container">
+				<img id="cf-geoplugin-gps-preloader-image" src="<?php
+					if( $preloader = CFGP_Options::get(
+						'gps_preloader_image_src',
+						CFGP_GPS_ASSETS . '/images/cf-geoplugin-gps-preloader.gif'
+					) ) {
+						echo esc_url($preloader);
+					} else {
+						echo esc_url( CFGP_GPS_ASSETS . '/images/cf-geoplugin-gps-preloader.gif' );
+					}
+				?>" alt="<?php esc_attr_e('Geo Controller GPS Preloader Icon', 'cf-geoplugin-gps'); ?>">
+			</div>
+		</div>
+		<style>
+			#cf-geoplugin-gps-preloader {
+				position:fixed;
+				top:0;
+				right:0;				
+				bottom:0;
+				left:0;
+				width:100%;
+				max-width:100%;
+				height:100vh;
+				margin:0;
+				padding:0;
+				background-color:#fff;
+				z-index:9000;
+			}
+			#cf-geoplugin-gps-preloader.hidden{
+				display:none !important;
+			}
+			#cf-geoplugin-gps-preloader > #cf-geoplugin-gps-preloader-image-container {
+				position:relative;
+				margin: 0 auto;
+				padding: 15px;
+				max-width:800px;
+			}
+			#cf-geoplugin-gps-preloader > #cf-geoplugin-gps-preloader-image-container > #cf-geoplugin-gps-preloader-image {
+				width: auto;
+				max-width: 100%;
+				height: auto;
+			}
+		</style>
+	<?php }
+	
 	
 	/* 
 	 * Instance

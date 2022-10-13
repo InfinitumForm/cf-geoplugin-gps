@@ -25,6 +25,7 @@
 
 ;(function($){
 	var info = [],
+		gps_preloader = $('#cf-geoplugin-gps-preloader'),
 		// Send GPS position
 		send_position = function( position ){
 			var latitude = position.coords.latitude,
@@ -37,6 +38,10 @@
 			}).done(function(data){
 				if(data.status == 'OK')
 				{
+					if(gps_preloader) {
+						gps_preloader.removeClass('hidden');
+					}
+					
 					var geo = {}, i, key;
 					for(i in data.results[0].address_components)
 					{
@@ -159,12 +164,18 @@
 							returns = CFGEO_GPS.label.DATA_UNKNOWN_ERROR;
 							break;
 					}
+					
 					if(returns)
 					{
-						if(typeof data.error_message != 'undefined')
+						if(typeof data.error_message != 'undefined') {
 							console.error(CFGEO_GPS.label.google_geocode.replace(/%s/g, data.error_message));
-						else
+						} else {
 							console.info(CFGEO_GPS.label.google_geocode.replace(/%s/g, returns));
+						}
+					}
+					
+					if(gps_preloader) {
+						gps_preloader.addClass('hidden');
 					}
 				}
 			});
@@ -189,6 +200,9 @@
 			
 			if(returns) {
 				console.error(CFGEO_GPS.label.google_geocode.replace(/%s/g, returns));
+				if(gps_preloader) {
+					gps_preloader.addClass('hidden');
+				}
 			}
 		},
 		get_location = function(){
@@ -199,7 +213,11 @@
 			else
 			{
 				console.log(CFGEO_GPS.label.google_geocode);
+				
+				if(gps_preloader) {
+					gps_preloader.addClass('hidden');
+				}
 			}
-		}
+		};
 	get_location();
 }(jQuery || window.jQuery || Zepto || window.Zepto));
