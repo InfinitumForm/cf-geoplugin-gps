@@ -3,8 +3,8 @@ Contributors: ivijanstefan, creativform
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=creativform@gmail.com
 Tags: gps, geolocation, cf-geoplugin, geo-controller, geocoding, google-maps, woocommerce, store-locator, seo, geomarketing, geo plugin, geotargeting, geofencing
 Requires at least: 4.5
-Tested up to: 6.0
-Requires PHP: 7.0.0
+Tested up to: 6.1
+Requires PHP: 7.0
 Stable tag: 2.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
