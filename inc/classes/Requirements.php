@@ -102,7 +102,7 @@ if(!class_exists('CFGP_GPS_Requirements')) : class CFGP_GPS_Requirements {
 		} else {
 			add_action( 'admin_notices', function () {
 				echo '<div class="notice notice-error">';
-				echo '<p>'.sprintf(__('The %1$s cannot run on PHP versions older than PHP %2$s. Please contact your host and ask them to upgrade.', CFGP_NAME), esc_html( $this->title ), $this->php).'</p>';
+				echo '<p>'.sprintf(__('The %1$s cannot run on PHP versions older than PHP %2$s. Please contact your host and ask them to upgrade.', 'cf-geoplugin'), esc_html( $this->title ), $this->php).'</p>';
 				echo '</div>';
 			} );
 			return false;
@@ -118,7 +118,7 @@ if(!class_exists('CFGP_GPS_Requirements')) : class CFGP_GPS_Requirements {
 		} else {
 			add_action( 'admin_notices', function () {
 				echo '<div class="notice notice-error">';
-				echo '<p>'.sprintf(__('The %1$s cannot run on WordPress versions older than %2$s. Please update your WordPress installation.', CFGP_NAME), esc_html( $this->title ), $this->wp).'</p>';
+				echo '<p>'.sprintf(__('The %1$s cannot run on WordPress versions older than %2$s. Please update your WordPress installation.', 'cf-geoplugin'), esc_html( $this->title ), $this->wp).'</p>';
 				echo '</div>';
 			} );
 			return false;
@@ -153,7 +153,7 @@ font-weight:600;
 }
 </style>
 <div class="cf-geoplugin-upgrade-notice">
-<h3><?php printf(__('Important upgrade notice for the version %s:', CFGP_NAME), $response->new_version); ?></h3>
+<h3><?php printf(__('Important upgrade notice for the version %s:', 'cf-geoplugin'), $response->new_version); ?></h3>
 <div class="cf-geoplugin-upgrade-notice-list">
 	<?php echo str_replace(
 		array(
@@ -167,7 +167,7 @@ font-weight:600;
 	); ?>
 </div>
 <div class="cf-geoplugin-upgrade-notice-info">
-	<?php _e('NOTE: Before doing the update, it would be a good idea to backup your WordPress installations and settings.', CFGP_NAME); ?>
+	<?php _e('NOTE: Before doing the update, it would be a good idea to backup your WordPress installations and settings.', 'cf-geoplugin'); ?>
 </div>
 </div> 
 		<?php endif;
@@ -182,14 +182,14 @@ font-weight:600;
 		}
 	 
 		$privacy_poilicy = array(
-			__( 'This site uses the WordPress Geo Plugin GPS extension (formerly: CF Geo Plugin GPS extension) to display public visitor information based on the GPS location that can then be collected or used for various purposes depending on the settings of the plugin.', CFGP_NAME ),
-			__( 'The WordPress Geo Plugin GPS extension allows all CF Geo Plugin users to locate their visitors using a GPS location. Using this plugin you solve the biggest problem of locating mobile visitors and correcting their location errors.', CFGP_NAME ),
-			sprintf( __( 'This website uses API services, technology and goods from the WordPress Geo Plugin GPS extension and that part belongs to the <a href="%s" target="_blank">WordPress Geo Plugin Privacy Policy</a>.', CFGP_NAME ), CFGP_STORE . '/privacy-policy/' ),
-			sprintf( __( 'Also, part of the services, technology and goods come from the Google Geocode API and that part belongs to the <a href="%s" target="_blank">Google Privacy Policy</a>', CFGP_NAME ), 'https://policies.google.com/privacy' )
+			__( 'This site uses the WordPress Geo Plugin GPS extension (formerly: CF Geo Plugin GPS extension) to display public visitor information based on the GPS location that can then be collected or used for various purposes depending on the settings of the plugin.', 'cf-geoplugin' ),
+			__( 'The WordPress Geo Plugin GPS extension allows all CF Geo Plugin users to locate their visitors using a GPS location. Using this plugin you solve the biggest problem of locating mobile visitors and correcting their location errors.', 'cf-geoplugin' ),
+			sprintf( __( 'This website uses API services, technology and goods from the WordPress Geo Plugin GPS extension and that part belongs to the <a href="%s" target="_blank">WordPress Geo Plugin Privacy Policy</a>.', 'cf-geoplugin' ), CFGP_STORE . '/privacy-policy/' ),
+			sprintf( __( 'Also, part of the services, technology and goods come from the Google Geocode API and that part belongs to the <a href="%s" target="_blank">Google Privacy Policy</a>', 'cf-geoplugin' ), 'https://policies.google.com/privacy' )
 		);
 	 
 		wp_add_privacy_policy_content(
-			__( 'WordPress Geo Plugin GPS extension', CFGP_NAME ),
+			__( 'WordPress Geo Plugin GPS extension', 'cf-geoplugin' ),
 			wp_kses_post( wpautop( join((PHP_EOL . PHP_EOL), $privacy_poilicy), false ) )
 		);
 	}
