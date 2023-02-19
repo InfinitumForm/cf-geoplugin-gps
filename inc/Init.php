@@ -15,7 +15,9 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 		// Do translations
 		add_action('plugins_loaded', array(&$this, 'textdomain'));
 		// Push plugin to be last one
-		add_action('activated_plugin', array(&$this, 'force_plugin_to_be_last_included'));
+		if( strpos(CFGP_FILE, WPMU_PLUGIN_DIR) === false ) {
+			add_action('activated_plugin', array(&$this, 'force_plugin_to_be_last_included'));
+		}
 	}
 	
 	/**
@@ -91,8 +93,18 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 	 * @since     2.0.0
 	 */
 	public function textdomain() {
+		if ( is_textdomain_loaded( CFGP_GPS_NAME ) ) {
+			return;
+		}
+		
 		// Get locale
-		$locale = apply_filters( 'cfgp_plugin_locale', get_locale(), CFGP_GPS_NAME );
+		$locale = get_locale();
+		if( is_user_logged_in() ) {
+			if( $user_locale = get_user_locale( get_current_user_id() ) ) {
+				$locale = $user_locale;
+			}
+		}
+		$locale = apply_filters( 'cfgp_plugin_locale', $locale, CFGP_GPS_NAME );
 		// We need standard file
 		$mofile = sprintf( '%s-%s.mo', CFGP_GPS_NAME, $locale );
 		// Check first inside `/wp-content/languages/plugins`
@@ -133,18 +145,18 @@ if(!class_exists('CFGP_GPS_Init')) : final class CFGP_GPS_Init{
 			//	'language'		=> get_bloginfo('language'),
 				'language'		=> 'en',
 				'label'			=> array(
-					'ZERO_RESULTS'			=> __('There is no results for this search.',CFGP_GPS_NAME),
-					'OVER_DAILY_LIMIT'		=> __('Your daily limit is reached. Check your billing settings.',CFGP_GPS_NAME),
-					'OVER_QUERY_LIMIT'		=> __('Your account quota is reached.',CFGP_GPS_NAME),
-					'REQUEST_DENIED'		=> __('Your request is denied.',CFGP_GPS_NAME),
-					'INVALID_REQUEST'		=> __('Your send bad or broken request to you API call.',CFGP_GPS_NAME),
-					'DATA_UNKNOWN_ERROR'	=> __('Request could not be processed due to a server error. The request may succeed if you try again.',CFGP_GPS_NAME),
-					'PERMISSION_DENIED'		=> __('User denied the request for Geolocation.',CFGP_GPS_NAME),
-					'POSITION_UNAVAILABLE'	=> __('Location information is unavailable.',CFGP_GPS_NAME),
-					'TIMEOUT'				=> __('The request to get user location timed out.',CFGP_GPS_NAME),
-					'UNKNOWN_ERROR'			=> __('An unknown error occurred.',CFGP_GPS_NAME),
-					'not_supported'			=> __('Geolocation is not supported by this browser.',CFGP_GPS_NAME),
-					'google_geocode'		=> __('Google Geocode: %s',CFGP_GPS_NAME),
+					'ZERO_RESULTS'			=> __('There is no results for this search.', 'cf-geoplugin-gps'),
+					'OVER_DAILY_LIMIT'		=> __('Your daily limit is reached. Check your billing settings.', 'cf-geoplugin-gps'),
+					'OVER_QUERY_LIMIT'		=> __('Your account quota is reached.', 'cf-geoplugin-gps'),
+					'REQUEST_DENIED'		=> __('Your request is denied.', 'cf-geoplugin-gps'),
+					'INVALID_REQUEST'		=> __('Your send bad or broken request to you API call.', 'cf-geoplugin-gps'),
+					'DATA_UNKNOWN_ERROR'	=> __('Request could not be processed due to a server error. The request may succeed if you try again.', 'cf-geoplugin-gps'),
+					'PERMISSION_DENIED'		=> __('User denied the request for Geolocation.', 'cf-geoplugin-gps'),
+					'POSITION_UNAVAILABLE'	=> __('Location information is unavailable.', 'cf-geoplugin-gps'),
+					'TIMEOUT'				=> __('The request to get user location timed out.', 'cf-geoplugin-gps'),
+					'UNKNOWN_ERROR'			=> __('An unknown error occurred.', 'cf-geoplugin-gps'),
+					'not_supported'			=> __('Geolocation is not supported by this browser.', 'cf-geoplugin-gps'),
+					'google_geocode'		=> __('Google Geocode: %s', 'cf-geoplugin-gps'),
 				)
 			)
 		);

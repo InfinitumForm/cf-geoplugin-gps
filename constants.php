@@ -37,6 +37,12 @@ if(file_exists(WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'cf-geoplugin'))
 	if ( ! defined( 'CFGP_ROOT' ) )		define( 'CFGP_ROOT', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'cf-geoplugin' );
 	// Main plugin file
 	if ( ! defined( 'CFGP_FILE' ) )		define( 'CFGP_FILE', CFGP_ROOT . DIRECTORY_SEPARATOR . 'cf-geoplugin.php' );
+} else if(file_exists(WPMU_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'cf-geoplugin'))
+{
+	// Main Plugin root
+	if ( ! defined( 'CFGP_ROOT' ) )		define( 'CFGP_ROOT', WPMU_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'cf-geoplugin' );
+	// Main plugin file
+	if ( ! defined( 'CFGP_FILE' ) )		define( 'CFGP_FILE', CFGP_ROOT . DIRECTORY_SEPARATOR . 'cf-geoplugin.php' );
 } else {
 	// Main Plugin root
 	if ( ! defined( 'CFGP_ROOT' ) )		define( 'CFGP_ROOT', WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'cf-geoplugin' );

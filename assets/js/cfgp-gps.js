@@ -3,7 +3,7 @@
  *
  * @link              http://cfgeoplugin.com/
  * @since             1.0.0
- * @version           1.0.3
+ * @version           1.0.4
  * @package           CF_Geoplugin_GPS
  * @author            INFINITUM FORM
  * @license           GPL-2.0+
@@ -54,6 +54,7 @@
 				gps_preloader.remove();
 			}
 			
+			// Get Geo data and set variables
 			$.get('https://maps.googleapis.com/maps/api/geocode/json',{
 				key : CFGEO_GPS.key,
 				language : CFGEO_GPS.language,
@@ -124,7 +125,8 @@
 						geo.latitude = latitude;
 						geo.longitude = longitude;
 					}
-
+					
+					// Set GPS coordinates
 					$.post(CFGEO_GPS.ajax_url,{
 						action : 'cf_geoplugin_gps_set',
 						data : geo
@@ -132,6 +134,7 @@
 						if(returns.success === true){
 							var href = window.location.href;
 							
+							// Clear cache
 							if( typeof caches !== 'undefined' ) {
 								caches.keys().then(function(keyList) {
 									if( typeof Promise !== 'undefined' ) {
@@ -142,17 +145,21 @@
 								} );
 							}
 							
+							// Generate salt
+							var salt = "x".repeat(32).replace(/./g, c => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.floor(Math.random() * 62) ] );
+							
+							// Refresh page
 							if(href.indexOf('?') > -1)
 							{
-								window.location.href = href + '&gps=1';
-								location.href = href + '&gps=1';
-								location = href + '&gps=1';
+								window.location.href = href + '&gps=1&salt='+salt;
+								location.href = href + '&gps=1&salt='+salt;
+								location = href + '&gps=1&salt='+salt;
 							}
 							else
 							{
-								window.location.href = href + '?gps=1';
-								location.href = href + '?gps=1';
-								location = href + '?gps=1';
+								window.location.href = href + '?gps=1&salt='+salt;
+								location.href = href + '?gps=1&salt='+salt;
+								location = href + '?gps=1&salt='+salt;
 							}
 							
 							window.history.forward(1);
@@ -161,6 +168,7 @@
 				}
 				else
 				{
+					// Define errors
 					var returns = null;
 					switch(data.status)
 					{

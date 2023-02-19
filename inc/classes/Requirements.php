@@ -46,6 +46,9 @@ if(!class_exists('CFGP_GPS_Requirements')) : class CFGP_GPS_Requirements {
 	 * Detect if plugin passes all checks 
 	 */
 	public function passes() {
+		if (!function_exists('is_plugin_active')) {
+			include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+		}
 		$passes = ( $this->validate_php_version() && $this->validate_wp_version() && $this->validate_main_plugin() );
 		if ( ! $passes ) {
 			add_action( 'admin_notices', function () {
@@ -62,29 +65,42 @@ if(!class_exists('CFGP_GPS_Requirements')) : class CFGP_GPS_Requirements {
 	 */
 	private function validate_main_plugin() {
 		// If plugin exists
-		if( !file_exists(WP_PLUGIN_DIR . "/{$this->cfgp_slug}/{$this->cfgp_slug}.php") ) {
+		
+		$plugin_path = $plugin_active = false;
+		
+		if( file_exists(WP_PLUGIN_DIR . "/{$this->cfgp_slug}/{$this->cfgp_slug}.php") ) {
+			$plugin_path = WP_PLUGIN_DIR . "/{$this->cfgp_slug}/{$this->cfgp_slug}.php";
+			$plugin_active = is_plugin_active("{$this->cfgp_slug}/{$this->cfgp_slug}.php");
+		}
+		
+		if( file_exists(WPMU_PLUGIN_DIR . "/{$this->cfgp_slug}/{$this->cfgp_slug}.php") ) {
+			$plugin_path = WPMU_PLUGIN_DIR . "/{$this->cfgp_slug}/{$this->cfgp_slug}.php";
+			$plugin_active = true;
+		}
+		
+		if( !$plugin_path ) {
 			add_action( 'admin_notices', function () {
 				echo '<div class="notice notice-error">';
-				echo '<p>'.sprintf(__('You need first to install %1$s in order to use this %2$s addon.', CFGP_GPS_NAME), '<a href="https://wordpress.org/plugins/cf-geoplugin/" target="_blank">' . $this->cfgp_title . '</a>', "<b>{$this->title}</b>").'</p>';
+				echo '<p>'.sprintf(__('You need first to install %1$s in order to use this %2$s addon.', 'cf-geoplugin-gps'), '<a href="https://wordpress.org/plugins/cf-geoplugin/" target="_blank">' . $this->cfgp_title . '</a>', "<b>{$this->title}</b>").'</p>';
 				echo '</div>';
 			} );
 			return false;
 		}
 		// If plugin is in version
-		$parent_plugin_data = get_plugin_data(WP_PLUGIN_DIR . "/{$this->cfgp_slug}/{$this->cfgp_slug}.php");
+		$parent_plugin_data = get_plugin_data($plugin_path);
 		if( $parent_plugin_data && version_compare( $parent_plugin_data['Version'], $this->cfgp_version, '<') ) {
 			add_action( 'admin_notices', function () {
 				echo '<div class="notice notice-error">';
-			echo '<p>'.sprintf(__('You need first to upgrade your %1$s to version %2$s or above in order to use this %3$s addon.', CFGP_GPS_NAME), "<b>{$this->cfgp_title}</b>", "<b>{$this->cfgp_version}</b>", "<b>{$this->title}</b>").'</p>';
+			echo '<p>'.sprintf(__('You need first to upgrade your %1$s to version %2$s or above in order to use this %3$s addon.', 'cf-geoplugin-gps'), "<b>{$this->cfgp_title}</b>", "<b>{$this->cfgp_version}</b>", "<b>{$this->title}</b>").'</p>';
 				echo '</div>';
 			} );
 			return false;
 		}
 		// If plugin is active
-		if( !is_plugin_active("{$this->cfgp_slug}/{$this->cfgp_slug}.php") ) {
+		if( !$plugin_active ) {
 			add_action( 'admin_notices', function () {
 				echo '<div class="notice notice-error">';
-				echo '<p>'.sprintf(__('%1$s need to be activated in order to use this %2$s addon.', CFGP_GPS_NAME), "<b>{$this->cfgp_title}</b>", "<b>{$this->title}</b>").'</p>';
+				echo '<p>'.sprintf(__('%1$s need to be activated in order to use this %2$s addon.', 'cf-geoplugin-gps'), "<b>{$this->cfgp_title}</b>", "<b>{$this->title}</b>").'</p>';
 				echo '</div>';
 			} );
 			return false;

@@ -139,7 +139,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 	 */
 	public function template_redirect(){
 		if( ($_GET['gps'] ?? 0) == 1 ) {
-			wp_safe_redirect( remove_query_arg('gps') ); exit;
+			wp_safe_redirect( remove_query_arg(['gps', 'salt']) ); exit;
 		}
 	}
 	
