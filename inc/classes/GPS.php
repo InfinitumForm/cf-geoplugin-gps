@@ -139,7 +139,9 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 	 */
 	public function template_redirect(){
 		if( ($_GET['gps'] ?? 0) == 1 ) {
-			wp_safe_redirect( remove_query_arg(['gps', 'salt']) ); exit;
+			if( wp_safe_redirect( remove_query_arg(['gps', 'salt']) ) ) {
+				exit;
+			}
 		}
 	}
 	
@@ -233,7 +235,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 					'debug' => array(
 						'transient' => "cfgp-api-{$ip_slug}",
 						'geo' => (array)$GEO,
-						'request_data' => ( $_REQUEST['data'] ?? NULL )
+						'request_data' => CFGP_Options::sanitize( $_REQUEST['data'] ?? array() ) // Must be as this in development mode
 					)
 				), 200);
 			} else {
@@ -266,26 +268,22 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 		</div>
 	<?php }
 	
+	public function get_default_preloader() {
+		return apply_filters('cfgp_gps/preloader/default', CFGP_GPS_ASSETS . '/images/cf-geoplugin-gps-preloader.gif');
+	}
+	
 	/**
 	 * Append preloader to pages
 	 */
-	public function append_preloader() { ?>
-		<div id="cf-geoplugin-gps-preloader" class="hidden">
-			<div id="cf-geoplugin-gps-preloader-image-container">
-				<img id="cf-geoplugin-gps-preloader-image" src="<?php
-					if( $preloader = CFGP_Options::get(
-						'gps_preloader_image_src',
-						CFGP_GPS_ASSETS . '/images/cf-geoplugin-gps-preloader.gif'
-					) ) {
-						echo esc_url($preloader);
-					} else {
-						echo esc_url( CFGP_GPS_ASSETS . '/images/cf-geoplugin-gps-preloader.gif' );
-					}
-				?>" alt="<?php esc_attr_e('Geo Controller GPS Preloader Icon', 'cf-geoplugin-gps'); ?>">
-			</div>
-		</div>
-		<style>
-			#cf-geoplugin-gps-preloader {
+	public function append_preloader() {
+		
+		$preloader = apply_filters('cfgp_gps/preloader', CFGP_Options::get(
+			'gps_preloader_image_src',
+			$this->get_default_preloader()
+		) );
+		
+		if( apply_filters('cfgp_gps/preloader/css/enable', true) ) : ?><style><?php
+			$css = '#cf-geoplugin-gps-preloader {
 				position:fixed;
 				top:0;
 				right:0;				
@@ -321,9 +319,24 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 				width: auto;
 				max-width: 100%;
 				height: auto;
-			}
-		</style>
-	<?php }
+			}';
+			
+			echo wp_kses_post( apply_filters('cfgp_gps/preloader/css', $css, $preloader, $this->get_default_preloader() ) );
+		?></style><?php endif; ob_start(); ?>
+		<div id="cf-geoplugin-gps-preloader" class="hidden">
+			<div id="cf-geoplugin-gps-preloader-image-container">
+				<img id="cf-geoplugin-gps-preloader-image" src="<?php
+					if( $preloader ) {
+						echo esc_url($preloader);
+					} else {
+						echo esc_url( CFGP_GPS_ASSETS . '/images/cf-geoplugin-gps-preloader.gif' );
+					}
+				?>" alt="<?php esc_attr_e('Geo Controller GPS Preloader Icon', 'cf-geoplugin-gps'); ?>">
+			</div>
+		</div>
+	<?php 
+		echo wp_kses_post( apply_filters('cfgp_gps/preloader/html', ob_get_clean(), $preloader, $this->get_default_preloader() ) ); 
+	}
 	
 	
 	/* 

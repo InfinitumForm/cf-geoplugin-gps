@@ -50,7 +50,7 @@ if(file_exists(WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'cf-geoplugin'))
 	if ( ! defined( 'CFGP_FILE' ) )		define( 'CFGP_FILE', CFGP_ROOT . DIRECTORY_SEPARATOR . 'cf-geoplugin.php' );
 }
 // Current plugin version ( if change, clear also session cache )
-$cfgp_version = NULL;
+$cfgp_version = '';
 if(file_exists(CFGP_FILE))
 {
 	if(function_exists('get_file_data') && $plugin_data = get_file_data( CFGP_FILE, array('Version' => 'Version'), false ))
