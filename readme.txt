@@ -5,7 +5,7 @@ Tags: gps, geolocation, cf-geoplugin, geo-controller, geocoding, google-maps, wo
 Requires at least: 4.5
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,9 @@ It is very complicated to get GPS information and this data is sensitive. We mus
 No! This plugin cannot be used to track visitors. Plugin only returns some basic geo information and saves to session on the 5 minutes. 
 
 == Changelog ==
+
+= 2.1.1 =
+* Added alert for the Google Map API key
 
 = 2.1.0 =
 * Removed deprecated code
@@ -178,6 +181,9 @@ No! This plugin cannot be used to track visitors. Plugin only returns some basic
 * Adding GPS support for the Geo Controller
 
 == Upgrade Notice ==
+
+= 2.1.1 =
+* Added alert for the Google Map API key
 
 = 2.1.0 =
 * Removed deprecated code

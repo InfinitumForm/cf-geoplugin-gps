@@ -49,7 +49,29 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 			$this->add_action('cfgp/debug/nav-tab/after', 'debug_page_nav_tab');
 			$this->add_action('cfgp/debug/tab-panel/after', 'debug_page_tab_panel');
 		}
+		
+		if( !CFGP_Options::get('map_api_key', NULL) ) {
+			$this->add_action( 'admin_notices', 'alert_google_map_api_key' );
+		}
 	}
+	
+	/**
+	 * Alert that Google Map API key is empty
+	 */
+	public function alert_google_map_api_key () { ?>
+<div class="notice notice-error" id="cfgp-gps-google-map-api-key">
+	<h3><?php esc_html_e('Geo Controller GPS extension demands attention!', 'cf-geoplugin-gps'); ?></h3>
+	<p><?php echo wp_kses_post( sprintf(
+		__('In order to use the GPS extension, you must create a <a href="%2$s" target="_blank">Google Map API key</a> with an active <a href="%1$s" target="_blank">Geocode API</a>.', 'cf-geoplugin-gps'),
+		'https://developers.google.com/maps/documentation/javascript/geocoding',
+		'https://developers.google.com/maps/documentation/javascript/get-api-key'
+	) ); ?></p>
+	<p><?php echo wp_kses_post( sprintf(
+		__('Place the created Google Map API key in the <a href="%1$s" target="_self">settings of your plugin</a> and activate it.', 'cf-geoplugin-gps'),
+		esc_url( admin_url('/admin.php?page=cf-geoplugin-settings') . '#cfgp-section-gps-settings' )
+	) ); ?></p>
+</div>
+	<?php }
 	
 	/**
 	 * Add extra GPS options
@@ -103,7 +125,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 						'default' => '',
 						'attr' => array(
 							'autocomplete' => 'off',
-							'placeholder' => 'https://'
+							'placeholder' => $this->get_default_preloader()
 						)
 					)
 				)
@@ -269,7 +291,7 @@ if(!class_exists('CFGP_GPS')) : class CFGP_GPS extends CFGP_Global {
 	<?php }
 	
 	public function get_default_preloader() {
-		return apply_filters('cfgp_gps/preloader/default', CFGP_GPS_ASSETS . '/images/cf-geoplugin-gps-preloader.gif');
+		return apply_filters('cfgp_gps/preloader/default', esc_url( CFGP_GPS_ASSETS . '/images/cf-geoplugin-gps-preloader.gif') );
 	}
 	
 	/**
